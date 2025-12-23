@@ -9,16 +9,16 @@ const DATA = {
         'G': { text: '障壁解除' },
         'W': { text: '注意', class: 'icon-warn' },
 
-        '1F': { label: "1Fへ" },
-        '2F': { label: "2Fへ" },
-        '3F': { label: "3Fへ" },
-        '4F': { label: "4Fへ" },
-        '5F': { label: "5Fへ" },
-        '6F': { label: "6Fへ" },
-        '7F': { label: "7Fへ" },
-        '8F': { label: "8Fへ" },
-        '9F': { label: "9Fへ" },
-        '10F': { label: "10Fへ" },
+        '1F': { label: "1F" },
+        '2F': { label: "2F" },
+        '3F': { label: "3F" },
+        '4F': { label: "4F" },
+        '5F': { label: "5F" },
+        '6F': { label: "6F" },
+        '7F': { label: "7F" },
+        '8F': { label: "8F" },
+        '9F': { label: "9F" },
+        '10F': { label: "10F" },
     },
 
     // マップデータの配列
@@ -126,7 +126,7 @@ const DATA = {
                 "           ",
             ],
             styles: {
-                '5F!': { label: "5Fへ(一方通行)", class: "warn-label" },
+                '5F!': { label: "5F(一方通行)", class: "warn-label" },
             },
 
             nodes: [
@@ -216,14 +216,17 @@ const DATA = {
                 "           ",
             ],
             flowArrows: true,
+            styles: {
+                '8F!': { label: '8F右下' },
+            },
             nodes: [
-                { x: 1, y: 3, icons: ["icon-down tl 6F", "icon-up br 8F"] },
+                { x: 1, y: 3, icons: ["icon-down tl 6F", "icon-up br 8F!"] },
             ]
         },
         {
             id: 8,
             name: "8F",
-            headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
+            headers: { x: ["E2", "E3", "E4", "E0", "E1"], y: ["N3", "N4", "N0", "N1", "N2"] },
             notes: "",
             edges: [
                 "           ",
@@ -238,9 +241,12 @@ const DATA = {
                 " o o-o-o o ",
                 "           ",
             ],
+            styles: {
+                '9F!': { label: '9F右下側' },
+            },
             nodes: [
                 { x: 4, y: 0, class: "icon-down 7F" },
-                { x: 1, y: 3, icons: ["icon-up tr 9F"] },
+                { x: 1, y: 3, icons: ["icon-up tl 9F!"] },
             ]
         },
         {
