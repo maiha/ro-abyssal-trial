@@ -54,35 +54,46 @@ h2 { color: #888; margin-bottom: 10px; }
     position: relative;
     display: grid;
     grid-template-columns: 40px auto;
-    grid-template-rows: 40px auto;
+    grid-template-rows: 40px auto 40px;
+    grid-template-areas:
+        "title title"
+        "headerY stage"
+        "corner headerX";
 }
 
 #stage {
-    grid-column: 2;
-    grid-row: 2;
+    grid-area: stage;
 }
 
-/* 左上コーナーのスタイル */
-.header-corner {
-    /* グリッドの1行目・1列目に配置 */
-    grid-column: 1;
-    grid-row: 1;
-    
-    /* 文字の中央揃え */
+/* 上部タイトル（map.name） */
+.map-title {
+    grid-area: title;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    color: #888; /* 既存のデザインに合わせる */
-    font-size: 3rem;
+    color: #aaa;
+    font-size: 1.5rem;
 }
 
-.header-top { grid-column: 2; grid-row: 1; display: flex; justify-content: space-around; color: #aaa; font-weight: bold;}
-.header-left { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; justify-content: space-around; color: #aaa; font-weight: bold;}
+/* 左下コーナーのスタイル（マップID: D9等） */
+.header-corner {
+    grid-area: corner;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #888;
+    font-size: 1rem;
+}
+
+/* 下部x軸ヘッダー */
+.header-bottom { grid-area: headerX; display: flex; justify-content: space-around; align-items: center; color: #aaa; font-weight: bold;}
+/* 左側y軸ヘッダー */
+.header-left { grid-area: headerY; display: flex; flex-direction: column; justify-content: space-around; color: #aaa; font-weight: bold;}
 
 /* マップの舞台 */
 #stage {
-    grid-column: 2; grid-row: 2;
     position: relative;
     background-color: #252a30;
     border: 1px solid #3a4048;

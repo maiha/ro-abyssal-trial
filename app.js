@@ -906,8 +906,8 @@ function onCellClick(el, nodeData) {
 function updateHeaders() {
     const hX = document.getElementById('headerX');
     const hY = document.getElementById('headerY');
-    // 追加: コーナー要素の取得
     const hCorner = document.getElementById('headerCorner');
+    const hTitle = document.getElementById('mapTitle');
 
     if (!hX || !hY) return;
 
@@ -923,10 +923,14 @@ function updateHeaders() {
         });
     }
 
-    // 追加: コーナーテキスト更新 (例: "D1")
+    // 左下コーナー: マップID (例: "D1")
     if (hCorner) {
-        // map.id が定義されていれば表示、なければ空文字
         hCorner.textContent = currentMap.id ? `D${currentMap.id}` : '';
+    }
+
+    // 上部タイトル: map.name
+    if (hTitle) {
+        hTitle.textContent = currentMap.name || '';
     }
 }
 
