@@ -240,6 +240,33 @@ div[data-edge="flowArrowPath"] {
     --strokeStyle: #ff0000;
 }
 
+/* ==========================================
+   Path Trajectory スタイル
+   ========================================== */
+
+/* デフォルトパス（矢頭あり） */
+div[data-path="default"] {
+    --strokeStyle: #3498db;
+    --lineWidth: 4;
+    --headLength: 12;
+    --headAngle: 30;
+    --edgeOffset: 0.35;
+    --arrowHead: 1;
+    --arrowTail: 0;
+}
+
+/* 矢印スタイル（形状のみ - 色と組み合わせて使用） */
+div[data-path="arrow0"] { --arrowHead: 0; --arrowTail: 0; }  /* なし */
+div[data-path="arrow1"] { --arrowHead: 1; --arrowTail: 0; }  /* 終点のみ → */
+div[data-path="arrow2"] { --arrowHead: 0; --arrowTail: 1; }  /* 始点のみ ← */
+div[data-path="arrow3"] { --arrowHead: 1; --arrowTail: 1; }  /* 両端 ↔ */
+
+/* 色スタイル（色のみ - 形状と組み合わせて使用） */
+div[data-path="primary"] { --strokeStyle: #2980b9; }
+div[data-path="danger"]  { --strokeStyle: #e74c3c; }
+div[data-path="success"] { --strokeStyle: #27ae60; }
+div[data-path="warning"] { --strokeStyle: #f39c12; }
+
 
 .icon-treasure {
     background-image: url('images/treasure_box_t.png');

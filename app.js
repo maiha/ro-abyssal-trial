@@ -358,7 +358,9 @@ function getFlowArrowStyle() {
         lineWidth: style?.lineWidth || 3,
         headLength: parseFloat(style?.headLength) || 15,
         headAngle: (parseFloat(style?.headAngle) || 30) * Math.PI / 180,
-        edgeOffset: parseFloat(style?.edgeOffset) || 0.35
+        edgeOffset: parseFloat(style?.edgeOffset) || 0.35,
+        arrowHead: true,   // flowArrows はデフォルトで矢頭あり
+        arrowTail: false   // 矢尻はなし
     };
 }
 
@@ -397,15 +399,25 @@ function drawVectorArrow(ctx, path) {
     const style = getFlowArrowStyle();
     const points = getFlowArrowPoints(path, style.edgeOffset);
 
-    // 終点を矢頭の長さ分だけ手前に短縮（丸キャップ分を考慮）
+    const first = points[0];
+    const second = points[1];
     const last = points[points.length - 1];
     const prev = points[points.length - 2];
-    const angle = Math.atan2(last.py - prev.py, last.px - prev.px);
+
+    // 矢頭/矢尻の分だけ短縮した終点/始点を計算
+    const headAngle = Math.atan2(last.py - prev.py, last.px - prev.px);
+    const tailAngle = Math.atan2(first.py - second.py, first.px - second.px);
     const shortenBy = style.headLength - style.lineWidth / 2;
-    const shortenedLast = {
-        px: last.px - shortenBy * Math.cos(angle),
-        py: last.py - shortenBy * Math.sin(angle)
-    };
+
+    const strokeEnd = style.arrowHead ? {
+        px: last.px - shortenBy * Math.cos(headAngle),
+        py: last.py - shortenBy * Math.sin(headAngle)
+    } : last;
+
+    const strokeStart = style.arrowTail ? {
+        px: first.px - shortenBy * Math.cos(tailAngle),
+        py: first.py - shortenBy * Math.sin(tailAngle)
+    } : first;
 
     ctx.save();
     ctx.strokeStyle = style.strokeStyle;
@@ -414,26 +426,33 @@ function drawVectorArrow(ctx, path) {
     ctx.lineJoin = 'round';
 
     ctx.beginPath();
-    ctx.moveTo(points[0].px, points[0].py);
+    ctx.moveTo(strokeStart.px, strokeStart.py);
 
     if (points.length === 2) {
-        // 2点なら直線
-        ctx.lineTo(shortenedLast.px, shortenedLast.py);
+        ctx.lineTo(strokeEnd.px, strokeEnd.py);
     } else {
-        // 3点以上ならスムーズな曲線
-        for (let i = 1; i < points.length - 1; i++) {
+        // 3点以上ならスムーズな曲線（各制御点を1回だけ使用）
+        for (let i = 1; i < points.length - 2; i++) {
             const xc = (points[i].px + points[i + 1].px) / 2;
             const yc = (points[i].py + points[i + 1].py) / 2;
             ctx.quadraticCurveTo(points[i].px, points[i].py, xc, yc);
         }
-        // 最後の点へ（短縮済み）
-        ctx.quadraticCurveTo(prev.px, prev.py, shortenedLast.px, shortenedLast.py);
+        // 最後の曲線セグメント
+        const secondLast = points[points.length - 2];
+        ctx.quadraticCurveTo(secondLast.px, secondLast.py, strokeEnd.px, strokeEnd.py);
     }
 
     ctx.stroke();
 
-    // 矢頭を描画（元の終点位置に）
-    drawArrowHead(ctx, prev.px, prev.py, last.px, last.py, style);
+    // 矢頭を描画（終点側）
+    if (style.arrowHead) {
+        drawArrowHead(ctx, strokeEnd.px, strokeEnd.py, last.px, last.py, style);
+    }
+
+    // 矢尻を描画（始点側）
+    if (style.arrowTail) {
+        drawArrowHead(ctx, strokeStart.px, strokeStart.py, first.px, first.py, style);
+    }
 
     ctx.restore();
 }
@@ -457,6 +476,160 @@ function drawArrowHead(ctx, fromX, fromY, toX, toY, style) {
     );
     ctx.closePath();
     ctx.fill();
+}
+
+// ==========================================
+// PATH TRAJECTORY (座標列から軌跡を描画)
+// ==========================================
+
+const PATH_STYLE_CACHE = new Map();
+
+// 単一スタイルを CSS から取得
+function getPathStyleSingle(styleName) {
+    const key = styleName || 'default';
+    if (PATH_STYLE_CACHE.has(key)) return PATH_STYLE_CACHE.get(key);
+
+    const dummy = document.createElement('div');
+    dummy.setAttribute('data-path', key);
+    document.body.appendChild(dummy);
+    const style = window.getComputedStyle(dummy);
+
+    const config = {
+        strokeStyle: style.getPropertyValue('--strokeStyle').trim() || null,
+        lineWidth: parseFloat(style.getPropertyValue('--lineWidth')) || null,
+        headLength: parseFloat(style.getPropertyValue('--headLength')) || null,
+        headAngle: parseFloat(style.getPropertyValue('--headAngle')) || null,
+        edgeOffset: parseFloat(style.getPropertyValue('--edgeOffset')) || null,
+        arrowHead: style.getPropertyValue('--arrowHead').trim() || null,
+        arrowTail: style.getPropertyValue('--arrowTail').trim() || null
+    };
+
+    document.body.removeChild(dummy);
+    PATH_STYLE_CACHE.set(key, config);
+    return config;
+}
+
+// Path スタイルを取得（複合スタイル対応: "bidirectional danger"）
+function getPathStyle(styleNames) {
+    const names = (styleNames || 'default').split(/\s+/);
+
+    // デフォルト値
+    const merged = {
+        strokeStyle: '#3498db',
+        lineWidth: 4,
+        headLength: 12,
+        headAngle: 30,
+        edgeOffset: 0.35,
+        arrowHead: '1',
+        arrowTail: '0'
+    };
+
+    // 各スタイルを順番にマージ
+    for (const name of names) {
+        const style = getPathStyleSingle(name);
+        if (style.strokeStyle) merged.strokeStyle = style.strokeStyle;
+        if (style.lineWidth) merged.lineWidth = style.lineWidth;
+        if (style.headLength) merged.headLength = style.headLength;
+        if (style.headAngle) merged.headAngle = style.headAngle;
+        if (style.edgeOffset) merged.edgeOffset = style.edgeOffset;
+        if (style.arrowHead) merged.arrowHead = style.arrowHead;
+        if (style.arrowTail) merged.arrowTail = style.arrowTail;
+    }
+
+    // 最終変換
+    return {
+        strokeStyle: merged.strokeStyle,
+        lineWidth: merged.lineWidth,
+        headLength: merged.headLength,
+        headAngle: merged.headAngle * Math.PI / 180,
+        edgeOffset: merged.edgeOffset,
+        arrowHead: merged.arrowHead !== '0',
+        arrowTail: merged.arrowTail === '1'
+    };
+}
+
+// Path 軌跡を描画
+function drawPathTrajectory(ctx, pathDef) {
+    const cells = pathDef.cells;
+    if (!cells || cells.length < 2) return;
+
+    // 座標配列を { x, y } 形式に変換
+    const path = cells.map(c => ({ x: c[0], y: c[1] }));
+    const style = getPathStyle(pathDef.style);
+    const points = getFlowArrowPoints(path, style.edgeOffset);
+
+    if (points.length < 2) return;
+
+    // pathDef でスタイルをオーバーライド可能
+    const drawHead = pathDef.arrowHead ?? style.arrowHead;
+    const drawTail = pathDef.arrowTail ?? style.arrowTail;
+
+    const first = points[0];
+    const second = points[1];
+    const last = points[points.length - 1];
+    const prev = points[points.length - 2];
+
+    // 矢頭/矢尻の分だけ短縮した終点/始点を計算
+    const headAngle = Math.atan2(last.py - prev.py, last.px - prev.px);
+    const tailAngle = Math.atan2(first.py - second.py, first.px - second.px);
+    const shortenBy = style.headLength - style.lineWidth / 2;
+
+    const strokeEnd = drawHead ? {
+        px: last.px - shortenBy * Math.cos(headAngle),
+        py: last.py - shortenBy * Math.sin(headAngle)
+    } : last;
+
+    const strokeStart = drawTail ? {
+        px: first.px - shortenBy * Math.cos(tailAngle),
+        py: first.py - shortenBy * Math.sin(tailAngle)
+    } : first;
+
+    ctx.save();
+    ctx.strokeStyle = style.strokeStyle;
+    ctx.lineWidth = style.lineWidth;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    ctx.beginPath();
+    ctx.moveTo(strokeStart.px, strokeStart.py);
+
+    if (points.length === 2) {
+        ctx.lineTo(strokeEnd.px, strokeEnd.py);
+    } else {
+        // 3点以上ならスムーズな曲線（各制御点を1回だけ使用）
+        for (let i = 1; i < points.length - 2; i++) {
+            const xc = (points[i].px + points[i + 1].px) / 2;
+            const yc = (points[i].py + points[i + 1].py) / 2;
+            ctx.quadraticCurveTo(points[i].px, points[i].py, xc, yc);
+        }
+        // 最後の曲線セグメント
+        const secondLast = points[points.length - 2];
+        ctx.quadraticCurveTo(secondLast.px, secondLast.py, strokeEnd.px, strokeEnd.py);
+    }
+
+    ctx.stroke();
+
+    // 矢頭を描画（終点側）
+    if (drawHead) {
+        drawArrowHead(ctx, strokeEnd.px, strokeEnd.py, last.px, last.py, style);
+    }
+
+    // 矢尻を描画（始点側）
+    if (drawTail) {
+        drawArrowHead(ctx, strokeStart.px, strokeStart.py, first.px, first.py, style);
+    }
+
+    // ラベルを描画
+    if (pathDef.label) {
+        const labelPoint = points[Math.floor(points.length / 2)];
+        ctx.font = 'bold 14px sans-serif';
+        ctx.fillStyle = style.strokeStyle;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(pathDef.label, labelPoint.px, labelPoint.py - 10);
+    }
+
+    ctx.restore();
 }
 
 // ==========================================
@@ -503,6 +676,11 @@ function renderCanvas() {
         const arrowGraph = buildArrowGraph(edgeData);
         const arrowPaths = findArrowPaths(arrowGraph);
         arrowPaths.forEach(path => drawVectorArrow(fgCtx, path));
+    }
+
+    // Pass 4: Path Trajectories（座標列からの軌跡描画）
+    if (currentMap.paths && Array.isArray(currentMap.paths)) {
+        currentMap.paths.forEach(pathDef => drawPathTrajectory(fgCtx, pathDef));
     }
 }
 
