@@ -97,7 +97,11 @@ function loadMap(index) {
     selectedElement = null;
 
     // map別カスタムクラスの適用
-    stage.className = currentMap.className || '';
+    stage.className = currentMap.className || `map-${currentMap.id}`;
+
+    // マップ切替時にスタイルキャッシュをクリア（map別CSSを反映するため）
+    EDGE_STYLE_CACHE.clear();
+    PATH_STYLE_CACHE.clear();
 
     const logicalNodes = parseNodes(currentMap);
     renderDOM(logicalNodes);
@@ -491,7 +495,7 @@ function getPathStyleSingle(styleName) {
 
     const dummy = document.createElement('div');
     dummy.setAttribute('data-path', key);
-    document.body.appendChild(dummy);
+    stage.appendChild(dummy);
     const style = window.getComputedStyle(dummy);
 
     const config = {
@@ -504,7 +508,7 @@ function getPathStyleSingle(styleName) {
         arrowTail: style.getPropertyValue('--arrowTail').trim() || null
     };
 
-    document.body.removeChild(dummy);
+    stage.removeChild(dummy);
     PATH_STYLE_CACHE.set(key, config);
     return config;
 }
@@ -766,7 +770,7 @@ function getEdgeStyle(char) {
 
     const dummy = document.createElement('div');
     dummy.setAttribute('data-edge', char);
-    document.body.appendChild(dummy);
+    stage.appendChild(dummy);
     const style = window.getComputedStyle(dummy);
 
     const config = {
@@ -791,7 +795,7 @@ function getEdgeStyle(char) {
         edgeOffset: style.getPropertyValue('--edgeOffset').trim()
     };
 
-    document.body.removeChild(dummy);
+    stage.removeChild(dummy);
     EDGE_STYLE_CACHE.set(char, config);
     return config;
 }

@@ -164,11 +164,19 @@ div[data-edge="!"] {
     
     /* テキストを削除 */
     --edge-text: "";
+    background-image: url('images/FERUS_P_t.png');
     
     /* 画像設定 */
-    background-image: url('images/FERUS_P_t.png');
     width: 80px;
     height: 80px;
+}
+
+
+/* 6Fの!はペロスでなく宝箱条件 */
+.map-6 div[data-edge="!"] {
+    --lineWidth: 1;
+    --edge-text: "障壁解除";
+    background-image: none;
 }
 
 /* =========================================
@@ -291,9 +299,6 @@ div[data-path="warning"] { --strokeStyle: #f39c12; }
 }
 .icon-golem {
     background-color: #C0C0C0; color: black;
-}
-.icon-danger {
-    background-image: url('images/FERUS_P_t.png'); 
 }
 .icon-boss {
     background-color: #cc0000; color: #fff;
