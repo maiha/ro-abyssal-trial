@@ -16,6 +16,68 @@ const nodeLayer = document.getElementById('node-layer');
 
 let currentMap = null;
 let selectedElement = null;
+const hiddenPathGroups = new Set();
+const initializedToggles = new Set();
+
+// パスグループの表示切替
+function togglePathGroup(toggleName) {
+    if (hiddenPathGroups.has(toggleName)) {
+        hiddenPathGroups.delete(toggleName);
+    } else {
+        hiddenPathGroups.add(toggleName);
+    }
+    renderCanvas();
+    updatePathToggleUI();
+}
+
+// パストグルUIの状態更新
+function updatePathToggleUI() {
+    document.querySelectorAll('.path-toggle').forEach(btn => {
+        const toggle = btn.dataset.toggle;
+        btn.classList.toggle('active', !hiddenPathGroups.has(toggle));
+    });
+}
+
+// パストグルUIの生成
+function renderPathToggleUI() {
+    const container = document.getElementById('path-toggles');
+    if (!container) return;
+    container.innerHTML = '';
+
+    // DATA.toggles（グローバル定義）または現マップのpathsからトグル名を取得
+    // 形式: ["name"] または [{name: "name", show: true}]
+    let toggleDefs = [];
+    if (typeof DATA !== 'undefined' && Array.isArray(DATA.toggles)) {
+        toggleDefs = DATA.toggles.map(t =>
+            typeof t === 'string' ? { name: t, show: false } : t
+        );
+    } else if (currentMap.paths) {
+        toggleDefs = [...new Set(
+            currentMap.paths
+                .map(p => p.toggle)
+                .filter(g => g)
+        )].map(name => ({ name, show: false }));
+    }
+
+    toggleDefs.forEach(def => {
+        const toggle = def.name;
+        // 初回のみ初期化
+        if (!initializedToggles.has(toggle)) {
+            if (!def.show) {
+                hiddenPathGroups.add(toggle);
+            }
+            initializedToggles.add(toggle);
+        }
+
+        const isActive = !hiddenPathGroups.has(toggle);
+        const btn = document.createElement('button');
+        btn.className = 'path-toggle' + (isActive ? ' active' : '');
+        btn.dataset.toggle = toggle;
+        btn.textContent = toggle;
+        btn.onclick = () => togglePathGroup(toggle);
+        container.appendChild(btn);
+    });
+}
 
 // ==========================================
 // INITIALIZATION (Hash = map.id Support)
@@ -105,6 +167,7 @@ function loadMap(index) {
 
     const logicalNodes = parseNodes(currentMap);
     renderDOM(logicalNodes);
+    renderPathToggleUI();  // hiddenPathGroupsを先に設定
     renderCanvas();
     updateHeaders();
 
@@ -377,16 +440,16 @@ function getFlowArrowPoints(path, edgeOffset) {
         const curr = path[i];
 
         if (i === 0) {
-            // 始点: 次の点への方向にオフセット
+            // 始点: 次の点への方向にオフセット（出口側寄り）
             const next = path[i + 1];
-            const dx = next.x - curr.x;
-            const dy = next.y - curr.y;
+            const dx = Math.sign(next.x - curr.x);
+            const dy = Math.sign(next.y - curr.y);
             points.push(getCellEdgePoint(curr.x, curr.y, dx, dy, edgeOffset));
         } else if (i === path.length - 1) {
-            // 終点: 前の点からの方向にオフセット
+            // 終点: 前の点から離れる方向にオフセット（セル外側寄り）
             const prev = path[i - 1];
-            const dx = curr.x - prev.x;
-            const dy = curr.y - prev.y;
+            const dx = Math.sign(curr.x - prev.x);
+            const dy = Math.sign(curr.y - prev.y);
             points.push(getCellEdgePoint(curr.x, curr.y, -dx, -dy, edgeOffset));
         } else {
             // 中間点: 中央のまま
@@ -434,8 +497,13 @@ function drawVectorArrow(ctx, path) {
 
     if (points.length === 2) {
         ctx.lineTo(strokeEnd.px, strokeEnd.py);
+    } else if (points.length === 3) {
+        // 3点の場合: 中間点を経由する2本の線分（コーナーを通過）
+        const mid = points[1];
+        ctx.lineTo(mid.px, mid.py);
+        ctx.lineTo(strokeEnd.px, strokeEnd.py);
     } else {
-        // 3点以上ならスムーズな曲線（各制御点を1回だけ使用）
+        // 4点以上ならスムーズな曲線（各制御点を1回だけ使用）
         for (let i = 1; i < points.length - 2; i++) {
             const xc = (points[i].px + points[i + 1].px) / 2;
             const yc = (points[i].py + points[i + 1].py) / 2;
@@ -505,7 +573,8 @@ function getPathStyleSingle(styleName) {
         headAngle: parseFloat(style.getPropertyValue('--headAngle')) || null,
         edgeOffset: parseFloat(style.getPropertyValue('--edgeOffset')) || null,
         arrowHead: style.getPropertyValue('--arrowHead').trim() || null,
-        arrowTail: style.getPropertyValue('--arrowTail').trim() || null
+        arrowTail: style.getPropertyValue('--arrowTail').trim() || null,
+        fontSize: parseFloat(style.getPropertyValue('--fontSize')) || null
     };
 
     stage.removeChild(dummy);
@@ -525,7 +594,8 @@ function getPathStyle(styleNames) {
         headAngle: 30,
         edgeOffset: 0.35,
         arrowHead: '1',
-        arrowTail: '0'
+        arrowTail: '0',
+        fontSize: 14
     };
 
     // 各スタイルを順番にマージ
@@ -538,6 +608,7 @@ function getPathStyle(styleNames) {
         if (style.edgeOffset) merged.edgeOffset = style.edgeOffset;
         if (style.arrowHead) merged.arrowHead = style.arrowHead;
         if (style.arrowTail) merged.arrowTail = style.arrowTail;
+        if (style.fontSize) merged.fontSize = style.fontSize;
     }
 
     // 最終変換
@@ -548,7 +619,8 @@ function getPathStyle(styleNames) {
         headAngle: merged.headAngle * Math.PI / 180,
         edgeOffset: merged.edgeOffset,
         arrowHead: merged.arrowHead !== '0',
-        arrowTail: merged.arrowTail === '1'
+        arrowTail: merged.arrowTail === '1',
+        fontSize: merged.fontSize
     };
 }
 
@@ -599,8 +671,13 @@ function drawPathTrajectory(ctx, pathDef) {
 
     if (points.length === 2) {
         ctx.lineTo(strokeEnd.px, strokeEnd.py);
+    } else if (points.length === 3) {
+        // 3点の場合: 中間点を経由する2本の線分（コーナーを通過）
+        const mid = points[1];
+        ctx.lineTo(mid.px, mid.py);
+        ctx.lineTo(strokeEnd.px, strokeEnd.py);
     } else {
-        // 3点以上ならスムーズな曲線（各制御点を1回だけ使用）
+        // 4点以上ならスムーズな曲線（各制御点を1回だけ使用）
         for (let i = 1; i < points.length - 2; i++) {
             const xc = (points[i].px + points[i + 1].px) / 2;
             const yc = (points[i].py + points[i + 1].py) / 2;
@@ -625,8 +702,14 @@ function drawPathTrajectory(ctx, pathDef) {
 
     // ラベルを描画
     if (pathDef.label) {
-        const labelPoint = points[Math.floor(points.length / 2)];
-        ctx.font = 'bold 14px sans-serif';
+        let labelIndex;
+        switch (pathDef.labelAt) {
+            case 'start': labelIndex = 0; break;
+            case 'end': labelIndex = points.length - 1; break;
+            default: labelIndex = Math.floor(points.length / 2);
+        }
+        const labelPoint = points[labelIndex];
+        ctx.font = `bold ${style.fontSize}px sans-serif`;
         ctx.fillStyle = style.strokeStyle;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
@@ -684,7 +767,9 @@ function renderCanvas() {
 
     // Pass 4: Path Trajectories（座標列からの軌跡描画）
     if (currentMap.paths && Array.isArray(currentMap.paths)) {
-        currentMap.paths.forEach(pathDef => drawPathTrajectory(fgCtx, pathDef));
+        currentMap.paths
+            .filter(pathDef => !pathDef.toggle || !hiddenPathGroups.has(pathDef.toggle))
+            .forEach(pathDef => drawPathTrajectory(fgCtx, pathDef));
     }
 }
 

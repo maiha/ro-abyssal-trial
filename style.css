@@ -11,7 +11,8 @@ body {
 h2 { color: #888; margin-bottom: 10px; }
 
 /* コントロール周り */
-#controls { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+.top-controls { display: flex; gap: 20px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+#controls { display: flex; gap: 10px; flex-wrap: wrap; }
 .map-radio { display: none; }
 .map-label {
     padding: 8px 16px; background: #2a2f35; color: #888;
@@ -19,6 +20,16 @@ h2 { color: #888; margin-bottom: 10px; }
 }
 .map-label:hover { background: #353a42; color: #aaa; }
 .map-radio:checked+.map-label { background: #4a5560; color: #fff; border-color: #5a6570; }
+
+/* パストグル */
+#path-toggles { display: flex; gap: 8px; flex-wrap: wrap; }
+.path-toggle {
+    padding: 6px 12px; background: #3a3a3a; color: #666;
+    border: 1px solid #555; border-radius: 4px; cursor: pointer;
+    font-size: 0.85rem; transition: all 0.2s;
+}
+.path-toggle:hover { background: #454545; color: #888; }
+.path-toggle.active { background: #4a5560; color: #fff; border-color: #5a6570; }
 
 /* メインコンテナ */
 .main-container { display: flex; gap: 30px; align-items: flex-start; }
@@ -149,7 +160,7 @@ h2 { color: #888; margin-bottom: 10px; }
 /* --- タイプ別ベースカラー --- */
 .type-o { background-color: #f0f4f5; color: transparent; }
 .type-S { background-color: #4a7c59; color: #fff; }
-.type-E { background-color: #5a7ab0; color: #fff; }
+.type-E { background-color: #95bbfc; color: black; }
 .type-W { background-color: #d0cc4a; color: #fff; }
 .type-B { background-color: #f5a8a8; } 
 .type-T { background-color: #e9c58f; } 
@@ -286,6 +297,22 @@ div[data-path="danger"]  { --strokeStyle: #e74c3c; }
 div[data-path="success"] { --strokeStyle: #27ae60; }
 div[data-path="warning"] { --strokeStyle: #f39c12; }
 
+/* ルート表示 */
+div[data-path="PT1"] {
+    --strokeStyle: #27ae60;
+    --lineWidth: 4;
+    --fontSize: 20;
+    --headLength: 18;
+    --headAngle: 36;
+}
+
+div[data-path="PT2"] {
+    --strokeStyle: #2980b9;
+    --lineWidth: 4;
+    --fontSize: 20;
+    --headLength: 18;
+    --headAngle: 36;
+}
 
 .icon-treasure {
     background-image: url('images/treasure_box_t.png');

@@ -1,6 +1,8 @@
 // data.js
 
 const DATA = {
+    toggles: [{ name: 'ルート情報', show: true }],
+
     // 全マップ共通のデザイン定義
     styles: {
         'B': { text: 'ボス', class: 'icon-boss' },
@@ -52,6 +54,31 @@ const DATA = {
                 { x: 4, y: 0, class: "icon-up 2F" }, // CSSクラス"icon-up" と データ"2F"を適用
                 { x: 0, y: 0, class: "start" },      // データ"start"を適用
             ],
+            paths: [
+                {
+                    toggle: 'ルート情報',
+                    cells: [[0, 0], [0, 2], [2, 2], [2, 4], [1, 4], [1, 3], [0, 3], [0, 4]],
+                    style: 'PT1',
+                    label: 'PT1',
+                    labelAt: 'start',
+                },
+                {
+                    toggle: 'ルート情報',
+                    cells: [[0, 0], [2, 0], [2, 1], [3, 1], [3, 0]],
+                    style: 'PT2',
+                    label: 'PT2',
+                    labelAt: 'start',
+                },
+                {
+                    toggle: 'ルート情報',
+                    cells: [[2, 2], [4, 2], [4, 0]],
+                    style: 'PT2',
+                    label: 'PT2',
+                    labelAt: 'start',
+                }
+
+            ],
+            //		toggle: "ルート表示",
             notes: "(未実装)"
         },
         {
@@ -83,6 +110,22 @@ const DATA = {
                 { x: 4, y: 0, class: "icon-down 1F" },
                 { x: 3, y: 3, label: "障壁解除" },
                 { x: 2, y: 2, icons: ["icon-up br 3F"] },
+            ],
+            paths: [
+                {
+                    toggle: 'ルート情報',
+                    cells: [[0, 4], [1, 4]],
+                    style: 'PT1',
+                    label: 'PT1',
+                    labelAt: 'middle',
+                },
+                {
+                    toggle: 'ルート情報',
+                    cells: [[4, 0], [4, 4], [2, 4]],
+                    style: 'PT2',
+                    label: 'PT2',
+                    labelAt: 'start',
+                }
             ]
         },
         {
@@ -104,8 +147,36 @@ const DATA = {
                 "           ",
             ],
             nodes: [
+                { x: 3, y: 0, text: '魔物の首', label: "首を手に取る" },
+                { x: 3, y: 4, text: '首なし像', label: "首を捧げる" },
                 { x: 2, y: 4, class: "icon-up 4F" },
                 { x: 2, y: 2, class: "icon-down 2F" },
+            ],
+            paths: [
+                {
+                    toggle: 'ルート情報',
+                    cells: [[1, 4], [0, 4], [0, 2], [1, 2], [1, 1], [2, 1], [2, 0], [3, 0]],
+                    style: 'PT1',
+                    label: 'PT1',
+                    labelAt: 'start',
+                },
+                {
+                    toggle: 'ルート情報',
+                    cells: [[3, 4], [2, 4]],
+                    style: 'PT1',
+                },
+                {
+                    toggle: 'ルート情報',
+                    cells: [[1, 1], [0, 1], [0, 0]],
+                    style: 'PT2',
+                    label: 'PT2',
+                    labelAt: 'start',
+                },
+                {
+                    toggle: 'ルート情報',
+                    cells: [[1, 2], [1, 3], [4, 3], [4, 4], [3, 4]],
+                    style: 'PT2',
+                }
             ]
         },
         {
@@ -141,6 +212,16 @@ const DATA = {
                 { x: 4, y: 4, icons: ["icon-up tm 5F!"] },
                 { x: 0, y: 0, icons: ["icon-up bm 5F!"] },
                 { x: 4, y: 0, icons: ["icon-up bm 5F!"] },
+            ],
+
+            paths: [
+                {
+                    toggle: 'ルート情報',
+                    cells: [[2, 4], [0, 4], [0, 0]],
+                    style: 'PT1',
+                    label: 'PT1',
+                    labelAt: 'start',
+                }
             ]
         },
         {
@@ -170,6 +251,28 @@ const DATA = {
                 { x: 3, y: 3, class: "icon-down 4F" },
                 { x: 1, y: 1, class: "icon-down 4F" },
                 { x: 3, y: 1, class: "icon-down 4F" },
+            ],
+
+            paths: [
+                {
+                    toggle: 'ルート情報',
+                    cells: [[0, 0], [2, 0]],
+                    style: 'PT1',
+                    label: 'PT1',
+                    labelAt: 'start',
+                },
+                {
+                    toggle: 'ルート情報',
+                    cells: [[2, 2], [4, 2], [4, 3]],
+                    style: 'PT1',
+                },
+                {
+                    toggle: 'ルート情報',
+                    cells: [[0, 4], [0, 2], [2, 2], [2, 1]],
+                    style: 'PT2',
+                    label: 'PT2',
+                    labelAt: 'start',
+                }
             ]
         },
         {
@@ -196,6 +299,24 @@ const DATA = {
             nodes: [
                 { x: 1, y: 3, icons: ["icon-up tr 7F"] },
                 { x: 4, y: 3, class: "icon-down 5F" },
+            ],
+
+
+            paths: [
+                {
+                    toggle: 'ルート情報',
+                    cells: [[4, 3], [4, 2], [1, 2], [1, 3]],
+                    style: 'PT1',
+                    label: 'PT1',
+                    labelAt: 'start',
+                },
+                {
+                    toggle: 'ルート情報',
+                    cells: [[3, 2], [3, 3]],
+                    style: 'PT2',
+                    label: 'PT2',
+                    labelAt: 'start',
+                }
             ]
         },
         {
