@@ -149,7 +149,7 @@ h2 { color: #888; margin-bottom: 10px; }
 /* --- タイプ別ベースカラー --- */
 .type-o { background-color: #f0f4f5; color: transparent; }
 .type-S { background-color: #4a7c59; color: #fff; }
-.type-G { background-color: #5a7ab0; color: #fff; }
+.type-E { background-color: #5a7ab0; color: #fff; }
 .type-W { background-color: #d0cc4a; color: #fff; }
 .type-B { background-color: #f5a8a8; } 
 .type-T { background-color: #e9c58f; } 
@@ -288,6 +288,9 @@ div[data-path="warning"] { --strokeStyle: #f39c12; }
     background-image: url('images/ZOMBIE_MASTER_t.png');
     background-size: 90%; background-position: center; background-repeat: no-repeat;
     color: transparent;
+}
+.icon-golem {
+    background-color: #C0C0C0; color: black;
 }
 .icon-danger {
     background-image: url('images/FERUS_P_t.png'); 
