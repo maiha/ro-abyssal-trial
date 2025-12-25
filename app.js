@@ -1019,7 +1019,7 @@ function updateHeaders() {
 
     // 上部タイトル: map.name
     if (hTitle) {
-        hTitle.textContent = currentMap.name || '';
+        hTitle.textContent = currentMap.title || '';
     }
 }
 

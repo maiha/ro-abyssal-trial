@@ -186,7 +186,7 @@ div[data-edge="!"] {
 /* 6Fの!はペロスでなく宝箱条件 */
 .map-6 div[data-edge="!"] {
     --lineWidth: 1;
-    --edge-text: "障壁解除";
+    --edge-text: "障壁";
     background-image: none;
 }
 
