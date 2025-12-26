@@ -8,38 +8,16 @@
 </head>
 
 <body>
-    <h2>深淵の試練場、道だけ</h2>
     <div class="top-controls">
+        <h2 class="page-title">深淵の試練場、道だけ</h2>
         <div id="path-toggles"></div>
         <div id="controls"></div>
     </div>
 
-    <div class="main-container">
-        <div class="map-wrapper">
-            <div class="map-title" id="mapTitle"></div>
-            <div class="header-left" id="headerY"></div>
-
-            <div id="stage">
-                <canvas id="bg-canvas"></canvas>
-                <div id="node-layer"></div>
-                <canvas id="fg-canvas"></canvas>
-            </div>
-
-            <div class="header-corner" id="headerCorner"></div>
-            <div class="header-bottom" id="headerX"></div>
-        </div>
-
-        <div class="info-panel">
-            <div class="panel-box">
-                <span class="panel-title">部屋の詳細</span>
-                <div id="node-detail">(未実装)</div>
-            </div>
-            <div class="panel-box">
-                <span class="panel-title">メモ</span>
-                <div id="map-notes">--</div>
-            </div>
-        </div>
+    <div id="maps-container" class="maps-container">
+        <!-- MapView instances will be dynamically created here -->
     </div>
+
 
     <!-- フッター -->
     <footer id="footer">

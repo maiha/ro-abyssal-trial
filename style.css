@@ -1,4 +1,13 @@
 /* =========================================
+    CSS変数（サイズ制御）
+    ========================================= */
+:root {
+    --cell-size: 80px;
+    --header-size: max(32px, calc(var(--cell-size) * 0.31));
+    --margin: 20px;
+}
+
+/* =========================================
     基本レイアウト
     ========================================= */
 body {
@@ -6,37 +15,65 @@ body {
     background-color: #1a1d21;
     color: #d4d4d4;
     display: flex; flex-direction: column; align-items: center;
-    margin: 0; padding: 0;
+    margin: 0;
+    padding: 80px 20px 20px 20px; /* top: fixedヘッダー分 */
 }
-h2 { color: #888; margin-bottom: 10px; }
 
-/* コントロール周り */
-.top-controls { display: flex; gap: 20px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
-#controls { display: flex; gap: 10px; flex-wrap: wrap; }
-.map-radio { display: none; }
+/* コントロール周り（fixed） */
+.top-controls {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: #1a1d21;
+    padding: 10px 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #333;
+}
+
+/* ページタイトル（左端ロゴ） */
+.page-title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #aaa;
+    white-space: nowrap;
+    margin-right: auto; /* 左端に固定、残りを右に押す */
+}
+
+#controls { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
 .map-label {
-    padding: 8px 16px; background: #2a2f35; color: #888;
+    padding: 5px 10px; background: #2a2f35; color: #888;
     border: 1px solid #3a4048; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+    font-size: inherit; font-family: inherit;
 }
 .map-label:hover { background: #353a42; color: #aaa; }
-.map-radio:checked+.map-label { background: #4a5560; color: #fff; border-color: #5a6570; }
+.map-label.active { background: #4a5560; color: #fff; border-color: #5a6570; }
+
+
+/* サイズ選択 */
+#size-controls { display: flex; gap: 6px; align-items: center; margin-left: 16px; }
+.size-btn {
+    padding: 6px 14px; background: #2a2f35; color: #888;
+    border: 1px solid #3a4048; border-radius: 4px; cursor: pointer;
+    font-size: 0.9rem; font-family: inherit; transition: all 0.2s;
+}
+.size-btn:hover { background: #353a42; color: #aaa; }
+.size-btn.active { background: #4a5560; color: #fff; border-color: #5a6570; }
 
 /* パストグル */
 #path-toggles { display: flex; gap: 8px; flex-wrap: wrap; }
 .path-toggle {
     padding: 6px 12px; background: #3a3a3a; color: #666;
     border: 1px solid #555; border-radius: 4px; cursor: pointer;
-    font-size: 0.85rem; transition: all 0.2s;
+    font-size: 0.85rem; font-family: inherit; transition: all 0.2s;
 }
 .path-toggle:hover { background: #454545; color: #888; }
 .path-toggle.active { background: #4a5560; color: #fff; border-color: #5a6570; }
 
-/* メインコンテナ */
-.main-container { display: flex; gap: 30px; align-items: flex-start; }
-.info-panel { width: 350px; display: flex; flex-direction: column; gap: 15px; }
-.panel-box { padding: 15px; background: #252525; border: 1px solid #444; border-radius: 8px; }
-.panel-title { font-size: 0.9rem; color: #888; border-bottom: 1px solid #444; padding-bottom: 4px; display: block; margin-bottom: 8px;}
-#node-detail .coord { font-weight: bold; margin-left: 10px; font-size: 1.1rem; }
 
 #footer {
   width: 100%;
@@ -57,26 +94,34 @@ h2 { color: #888; margin-bottom: 10px; }
 #footer a { color: #8ab4f8; text-decoration: none; }
 #footer a:hover { text-decoration: underline; color: #aecbfa; }
 
+/* =========================================
+    マップコンテナ（レイアウト管理）
+    ========================================= */
+.maps-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
 
 /* =========================================
-    マップ表示エリア
+    マップ表示エリア（動的生成用クラスベース）
     ========================================= */
 .map-wrapper {
     position: relative;
     display: grid;
-    grid-template-columns: 40px auto;
-    grid-template-rows: 40px auto 40px;
+    grid-template-columns: var(--header-size) auto;
+    grid-template-rows: var(--header-size) auto var(--header-size);
     grid-template-areas:
         "title title"
         "headerY stage"
         "corner headerX";
+    scroll-margin-top: 80px; /* fixedヘッダー分 */
 }
 
-#stage {
-    grid-area: stage;
-}
-
-/* 上部タイトル（map.name） */
+/* 上部タイトル */
 .map-title {
     grid-area: title;
     display: flex;
@@ -84,10 +129,10 @@ h2 { color: #888; margin-bottom: 10px; }
     justify-content: center;
     font-weight: bold;
     color: #aaa;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 }
 
-/* 左下コーナーのスタイル（マップID: D9等） */
+/* 左下コーナー（マップID: D9等） */
 .header-corner {
     grid-area: corner;
     display: flex;
@@ -99,12 +144,28 @@ h2 { color: #888; margin-bottom: 10px; }
 }
 
 /* 下部x軸ヘッダー */
-.header-bottom { grid-area: headerX; display: flex; justify-content: space-around; align-items: center; color: #aaa; font-weight: bold;}
-/* 左側y軸ヘッダー */
-.header-left { grid-area: headerY; display: flex; flex-direction: column; justify-content: space-around; color: #aaa; font-weight: bold;}
+.header-bottom {
+    grid-area: headerX;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: #aaa;
+    font-weight: bold;
+}
 
-/* マップの舞台 */
-#stage {
+/* 左側y軸ヘッダー */
+.header-left {
+    grid-area: headerY;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    color: #aaa;
+    font-weight: bold;
+}
+
+/* マップの舞台（クラスベース） */
+.stage {
+    grid-area: stage;
     position: relative;
     background-color: #252a30;
     border: 1px solid #3a4048;
@@ -112,24 +173,16 @@ h2 { color: #888; margin-bottom: 10px; }
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
-/* レイヤー1: 背景Canvas (経路) */
-#bg-canvas {
-    position: absolute;
-    top: 0; left: 0;
-    z-index: 5;
-    pointer-events: none;
-}
-
-/* レイヤー3: 前景Canvas (壁) */
-#fg-canvas {
+/* 前景Canvas */
+.fg-canvas {
     position: absolute;
     top: 0; left: 0;
     z-index: 20;
     pointer-events: none;
 }
 
-/* レイヤー2: Node (セル) */
-#node-layer {
+/* ノードレイヤー */
+.node-layer {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
@@ -141,19 +194,16 @@ h2 { color: #888; margin-bottom: 10px; }
     ========================================= */
 .cell {
     position: absolute;
-    width: 130px; height: 130px; /* JSのCELL_SIZEと合わせる */
+    width: var(--cell-size); height: var(--cell-size);
     box-sizing: border-box;
     display: flex; justify-content: center; align-items: center;
     cursor: pointer;
     transition: none;
-    /* デフォルトの床色 */
-    background-color: #f0f4f5; 
+    background-color: #f0f4f5;
     border: 4px solid transparent;
-    font-weight: bold; font-size: 20px; color: #445;
+    font-weight: bold; font-size: max(12px, calc(var(--cell-size) * 0.15)); color: #445;
 }
 
-
-/* ホバー時 (背景色で表示) */
 .cell:hover { filter: brightness(1.1); }
 .cell.selected { filter: brightness(0.9) saturate(1.2); }
 
@@ -162,33 +212,11 @@ h2 { color: #888; margin-bottom: 10px; }
 .type-S { background-color: #4a7c59; color: #fff; }
 .type-E { background-color: #95bbfc; color: black; }
 .type-W { background-color: #d0cc4a; color: #fff; }
-.type-B { background-color: #f5a8a8; } 
-.type-T { background-color: #e9c58f; } 
+.type-B { background-color: #f5a8a8; }
+.type-T { background-color: #e9c58f; }
 .type-Z { background-color: #e0c3ed; }
 
 .cell-black { background-color: #494949; }
-
-/* 危険な経路 */
-div[data-edge="!"] {
-    --strokeStyle: #ff4444;
-    --lineWidth: 4;
-    
-    /* テキストを削除 */
-    --edge-text: "";
-    background-image: url('images/FERUS_P_t.png');
-    
-    /* 画像設定 */
-    width: 80px;
-    height: 80px;
-}
-
-
-/* 6Fの!はペロスでなく宝箱条件 */
-.map-6 div[data-edge="!"] {
-    --lineWidth: 1;
-    --edge-text: "障壁";
-    background-image: none;
-}
 
 /* =========================================
     Edge (Path/Wall) デザイン定義
@@ -196,34 +224,25 @@ div[data-edge="!"] {
 
 /* すべてのエッジの基底定義 */
 div[data-edge] {
-    /* Canvas描画パラメータ (JSからの一括代入用) */
     --lineCap: butt;
-    --strokeStyle: #c0d0d5; /* 経路の基本色 */
-    --lineWidth: 2;         /* 経路の太さ */
-    
-    /* テキスト描画パラメータ */
+    --strokeStyle: #c0d0d5;
+    --lineWidth: 2;
     --edge-text: "";
     --textAlign: center;
     --textBaseline: middle;
     --edge-stroke-width: 0px;
     --edge-stroke-color: rgba(0, 0, 0, 0.8);
-
-    /* フォント設定 (一括指定) */
     font: bold 20px sans-serif;
-    color: #c0d0d5; /* フォールバック用の文字色 */
-
-    /* 画像・矩形サイズ */
-    width: 32px;
-    height: 32px;
+    color: #c0d0d5;
+    width: calc(var(--cell-size) * 0.25);
+    height: calc(var(--cell-size) * 0.25);
 }
 
 /* ノード間の壁(疎通なし) */
 div[data-edge="wall"] {
     --lineCap: round;
-    --strokeStyle: #444;    /* 外側の線の色 */
-    --lineWidth: 16;        /* 外側の太さ */
-    
-    /* 2層目描画用（JSの inner オブジェクトで取得） */
+    --strokeStyle: #444;
+    --lineWidth: 16;
     --inner-strokeStyle: #888;
     --inner-lineWidth: 10;
 }
@@ -232,13 +251,17 @@ div[data-edge="wall"] {
 div[data-edge="!"] {
     --strokeStyle: #ff4444;
     --lineWidth: 4;
-    
-    /* テキストを削除 */
     --edge-text: "";
-    
-    /* 画像設定 */
-    width: 80px;
-    height: 80px;
+    background-image: url('images/FERUS_P_t.png');
+    width: calc(var(--cell-size) * 0.6);
+    height: calc(var(--cell-size) * 0.6);
+}
+
+/* 6Fの!は特殊表示 */
+.map-6 div[data-edge="!"] {
+    --lineWidth: 1;
+    --edge-text: "障壁";
+    background-image: none;
 }
 
 /* 4方向矢印 */
@@ -264,7 +287,6 @@ div[data-edge="flowArrow"] {
     --edgeOffset: 0.35;
 }
 
-/* Flow Arrows モード時の矢印エッジ（矢印文字なし、線のみ） */
 div[data-edge="flowArrowPath"] {
     --lineWidth: 1;
     --strokeStyle: #ff0000;
@@ -274,7 +296,6 @@ div[data-edge="flowArrowPath"] {
    Path Trajectory スタイル
    ========================================== */
 
-/* デフォルトパス（矢頭あり） */
 div[data-path="default"] {
     --strokeStyle: #3498db;
     --lineWidth: 4;
@@ -285,13 +306,13 @@ div[data-path="default"] {
     --arrowTail: 0;
 }
 
-/* 矢印スタイル（形状のみ - 色と組み合わせて使用） */
-div[data-path="arrow0"] { --arrowHead: 0; --arrowTail: 0; }  /* なし */
-div[data-path="arrow1"] { --arrowHead: 1; --arrowTail: 0; }  /* 終点のみ → */
-div[data-path="arrow2"] { --arrowHead: 0; --arrowTail: 1; }  /* 始点のみ ← */
-div[data-path="arrow3"] { --arrowHead: 1; --arrowTail: 1; }  /* 両端 ↔ */
+/* 矢印スタイル */
+div[data-path="arrow0"] { --arrowHead: 0; --arrowTail: 0; }
+div[data-path="arrow1"] { --arrowHead: 1; --arrowTail: 0; }
+div[data-path="arrow2"] { --arrowHead: 0; --arrowTail: 1; }
+div[data-path="arrow3"] { --arrowHead: 1; --arrowTail: 1; }
 
-/* 色スタイル（色のみ - 形状と組み合わせて使用） */
+/* 色スタイル */
 div[data-path="primary"] { --strokeStyle: #2980b9; }
 div[data-path="danger"]  { --strokeStyle: #e74c3c; }
 div[data-path="success"] { --strokeStyle: #27ae60; }
@@ -314,6 +335,9 @@ div[data-path="PT2"] {
     --headAngle: 36;
 }
 
+/* =========================================
+    アイコン・ラベル
+    ========================================= */
 .icon-treasure {
     background-image: url('images/treasure_box_t.png');
     background-size: 70%; background-position: center; background-repeat: no-repeat;
@@ -341,27 +365,24 @@ div[data-path="PT2"] {
     color: transparent;
 }
 
-/* 子要素共通 */
 .sub-icon {
     position: absolute;
     background-repeat: no-repeat;
     background-size: contain;
     z-index: 5;
-    pointer-events: none; /* クリックは親セルに貫通させる */
+    pointer-events: none;
 }
 
-/* sub-icon の data-label 表示 */
 .sub-icon[data-label]::before {
     content: attr(data-label);
     position: absolute;
-    font-size: 16px; font-weight: bold; color: #333;
+    font-size: max(10px, calc(var(--cell-size) * 0.12)); font-weight: bold; color: #333;
     background: rgba(157, 255, 190, 0.85);
     padding: 2px 5px; border-radius: 3px; border: 1px solid #999;
     white-space: nowrap;
     z-index: 10;
 }
 
-/* 位置別のラベル配置（アイコンの下または上） */
 .sub-icon.tl[data-label]::before { top: 100%; left: 0; }
 .sub-icon.tm[data-label]::before { top: 100%; left: -50%; right: auto; }
 .sub-icon.tr[data-label]::before { top: 100%; right: 0; left: auto; }
@@ -369,39 +390,32 @@ div[data-path="PT2"] {
 .sub-icon.bm[data-label]::before { bottom: 100%; left: -50%; right: auto; }
 .sub-icon.br[data-label]::before { bottom: 100%; top: auto; right: 0; left: auto; }
 
-/* 配置用ユーティリティ */
-/* 上段 */
+/* 配置ユーティリティ */
 .tl { top: 0; left: 0; width: 33%; height: 33%; background-position: top left; }
 .tm { top: 0; left: 50%; transform: translateX(-50%); width: 33%; height: 33%; background-position: top center; }
 .tr { top: 0; right: 0; width: 33%; height: 33%; background-position: top right; }
-
-/* 下段 */
 .bl { bottom: 0; left: 0; width: 33%; height: 33%; background-position: bottom left; }
 .bm { bottom: 0; left: 50%; transform: translateX(-50%); width: 33%; height: 33%; background-position: bottom center; }
 .br { bottom: 0; right: 0; width: 33%; height: 33%; background-position: bottom right; }
 
-/* 汎用: 右上ミニアイコン化クラス */
 .corner-icon {
     background-repeat: no-repeat;
     background-size: 30%;
     background-position: right 5px top 5px;
 }
 
-/* data-label表示 */
 .cell[data-label]::after {
     content: attr(data-label);
     position: absolute;
-    top: 0; left: 50%; transform: translateX(-50%); 
-    font-size: 20px; font-weight: bold; color: #333;
+    top: 0; left: 50%; transform: translateX(-50%);
+    font-size: max(12px, calc(var(--cell-size) * 0.15)); font-weight: bold; color: #333;
     background: rgba(157, 255, 190, 0.85);
     padding: 2px 6px; border-radius: 4px; border: 1px solid #ccc;
     pointer-events: none; white-space: nowrap;
 }
 
-/* 例: .warn-label がついたセルのツールチップを赤くする */
 .warn-label::after {
-    color: #ff0000 !important; /* 赤文字 */
-    border-color: #ff0000 !important; /* 枠線も赤くする場合 */
-    /* background: #300 !important;  背景を暗い赤にする場合 */
+    color: #ff0000 !important;
+    border-color: #ff0000 !important;
 }
 
