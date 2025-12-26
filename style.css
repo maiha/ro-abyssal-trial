@@ -3,7 +3,7 @@
     ========================================= */
 :root {
     --cell-size: 80px;
-    --header-size: calc(var(--cell-size) * 0.31);
+    --header-size: max(32px, calc(var(--cell-size) * 0.31));
     --margin: 20px;
 }
 
@@ -110,7 +110,7 @@ body {
     justify-content: center;
     font-weight: bold;
     color: #aaa;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 }
 
 /* 左下コーナー（マップID: D9等） */
