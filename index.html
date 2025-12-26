@@ -3,73 +3,22 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>深淵の試練場、道だけ</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h2>深淵の試練場、道だけ</h2>
     <div class="top-controls">
+        <h2 class="page-title">ネットワーク構成図</h2>
         <div id="path-toggles"></div>
         <div id="controls"></div>
     </div>
 
-    <div class="main-container">
-        <div class="map-wrapper">
-            <div class="map-title" id="mapTitle"></div>
-            <div class="header-left" id="headerY"></div>
-
-            <div id="stage">
-                <canvas id="bg-canvas"></canvas>
-                <div id="node-layer"></div>
-                <canvas id="fg-canvas"></canvas>
-            </div>
-
-            <div class="header-corner" id="headerCorner"></div>
-            <div class="header-bottom" id="headerX"></div>
-        </div>
-
-        <div class="info-panel">
-            <div class="panel-box">
-                <span class="panel-title">部屋の詳細</span>
-                <div id="node-detail">(未実装)</div>
-            </div>
-            <div class="panel-box">
-                <span class="panel-title">メモ</span>
-                <div id="map-notes">--</div>
-            </div>
-        </div>
+    <div id="maps-container" class="maps-container">
+        <!-- MapView instances will be dynamically created here -->
     </div>
 
-    <!-- フッター -->
-    <footer id="footer">
-        <p>「ラグナロクオンライン」に関連する全ての表現物の権利は以下に帰属します。</p>
-        <p>©Gravity Co., Ltd. & LeeMyoungJin(studio DTDS) All rights reserved.</p>
-        <p>©GungHo Online Entertainment, Inc. All Rights Reserved.</p>
-        <hr>
-        <div>
-            <p><strong>参考元（外部サイト）</strong></p>
-            <ul>
-                <li>MAP情報：<a href="https://x.com/sasimi343299/status/1250142668169940992" target="_blank"
-                        rel="noopener">試練場MAP（さしみ様）</a></li>
-                <li>ルート情報：<a href="https://inekari.exblog.jp/241186126/" target="_blank" rel="noopener">深淵の試練場の基本的なこと
-                        応用編（inekari2nd様）</a></li>
-                <li>攻略情報: <a href="http://mizuiworld.blog107.fc2.com/blog-entry-1913.html" target="_blank"
-                        rel="noopener">RO 夜天の宝珠　個人日記（Izue様）</a></li>
-            </ul>
-
-            <hr>
-
-            <p>掲載内容の誤り、またはデータの再利用停止・掲載の取り下げをご希望の場合は、お手数ですが下記までご連絡をお願いいたします。</p>
-            <ul>
-                <li>連絡先（まいは＠RO丼）：<a href="https://ro-mastodon.puyo.jp/@maiha" target="_blank"
-                        rel="noopener">@maiha@ro-mastodon.puyo.jp</a></li>
-            </ul>
-        </div>
-    </footer>
-
-    <script src="data.js"></script>
-    <script src="app.js"></script>
+    <script src="./data.js"></script>
+    <script src="./app.js"></script>
 </body>
 
 </html>

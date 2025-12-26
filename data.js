@@ -5,11 +5,6 @@ const DATA = {
 
     // 全マップ共通のデザイン定義
     styles: {
-        'B': { text: 'ボス', class: 'icon-boss' },
-        'Z': { text: 'ゾンビ', class: 'icon-zombie' },
-        'G': { text: 'ゴーレム', class: 'icon-golem' },
-        'T': { text: '宝箱', class: 'icon-treasure' },
-        'E': { text: '障壁解除' },
         'W': { text: '注意', class: 'icon-warn' },
 
         '1F': { label: "1F" },
@@ -29,7 +24,7 @@ const DATA = {
         {
             id: 1,
             name: "1F",
-            title: "第1層 光と闇の選択",
+            title: "1F",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
             edges: [
@@ -85,7 +80,7 @@ const DATA = {
         {
             id: 2,
             name: "2F",
-            title: "第2層 食物連鎖",
+          title: "2F",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
             edges: [
@@ -111,7 +106,6 @@ const DATA = {
                 { x: 0, y: 4, class: "icon-down 1F" },
                 { x: 4, y: 0, class: "icon-down 1F" },
                 { x: 3, y: 3, label: "障壁(0-1-6)" },
-                { x: 2, y: 2, label: "燭台で解除" },
                 { x: 2, y: 2, icons: ["icon-up br 3F"] },
             ],
             paths: [
@@ -134,7 +128,7 @@ const DATA = {
         {
             id: 3,
             name: "3F",
-            title: "第3層 黄金の盗掘者",
+          title: "3F",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
             edges: [
@@ -151,8 +145,6 @@ const DATA = {
                 "           ",
             ],
             nodes: [
-                { x: 3, y: 0, text: '魔物の首', label: "首を手に取る" },
-                { x: 3, y: 4, text: '首なし像', label: "首を捧げる" },
                 { x: 1, y: 0, label: "障壁(0-2-6)" },
                 { x: 2, y: 4, class: "icon-up 4F" },
                 { x: 2, y: 2, class: "icon-down 2F" },
@@ -187,7 +179,7 @@ const DATA = {
         {
             id: 4,
             name: "4F",
-            title: "第4層 神殿上層",
+          title: "4F",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
             edges: [
@@ -204,7 +196,7 @@ const DATA = {
                 "           ",
             ],
             styles: {
-                '5F!': { label: "5F(一方通行)", class: "warn-label" },
+                '5F!': { label: "5F(一方)", class: "warn-label" },
             },
 
             nodes: [
@@ -235,7 +227,6 @@ const DATA = {
         {
             id: 5,
             name: "5F",
-            title: "第5層 神殿下層",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
             edges: [
@@ -288,7 +279,6 @@ const DATA = {
         {
             id: 6,
             name: "6F",
-            title: "第6層 宝物庫",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
             edges: [
@@ -339,7 +329,6 @@ const DATA = {
         {
             id: 7,
             name: "7F",
-            title: "第7層 一筆書き",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
             edges: [
@@ -366,7 +355,6 @@ const DATA = {
         {
             id: 8,
             name: "8F",
-            title: "第8層 世界一周",
             headers: { x: ["E2", "E3", "E4", "E0", "E1"], y: ["N3", "N4", "N0", "N1", "N2"] },
             notes: "",
             edges: [
@@ -393,7 +381,6 @@ const DATA = {
         {
             id: 9,
             name: "9F",
-            title: "第9層 星幽地帯",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
             edges: [
@@ -419,7 +406,6 @@ const DATA = {
         {
             id: 10,
             name: "10F",
-            title: "第10層 暗き闇の底",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
             edges: [
@@ -436,8 +422,8 @@ const DATA = {
                 "     ! ! ! ",
             ],
             nodes: [
-                { x: 2, y: 1, text: "裏ボス" },
-                { x: 3, y: 1, text: "表ボス" },
+                { x: 2, y: 1, text: "裏" },
+                { x: 3, y: 1, text: "表" },
 
                 { x: 1, y: 3, class: "icon-down 9F" },
                 { x: 3, y: 3, class: "icon-down 9F" },
