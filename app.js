@@ -271,10 +271,68 @@ class MapView {
         }
 
         if (this.mapData.paths && Array.isArray(this.mapData.paths)) {
-            this.mapData.paths
-                .filter(pathDef => !pathDef.toggle || !hiddenPathGroups.has(pathDef.toggle))
-                .forEach(pathDef => this.drawPathTrajectory(pathDef));
+            const visiblePaths = this.mapData.paths
+                .filter(pathDef => !pathDef.toggle || !hiddenPathGroups.has(pathDef.toggle));
+
+            // 同じ始点を持つパスを検出して自動オフセットを計算
+            const autoOffsets = this.calcAutoOffsets(visiblePaths);
+
+            visiblePaths.forEach((pathDef, i) => {
+                const autoOffset = autoOffsets.get(i);
+                this.drawPathTrajectory(pathDef, autoOffset);
+            });
         }
+    }
+
+    // 同じ始点を持つパスに自動オフセットを計算
+    calcAutoOffsets(paths) {
+        const offsets = new Map();
+        const startGroups = new Map();
+
+        // 始点でグループ化
+        paths.forEach((pathDef, i) => {
+            if (!pathDef.cells || pathDef.cells.length < 2) return;
+            if (pathDef.offset) return; // 手動設定があればスキップ
+
+            const start = pathDef.cells[0];
+            const key = `${start[0]},${start[1]}`;
+            if (!startGroups.has(key)) startGroups.set(key, []);
+            startGroups.get(key).push({ index: i, pathDef });
+        });
+
+        // 同じ始点が2つ以上あるグループに自動オフセット
+        for (const [key, group] of startGroups) {
+            if (group.length < 2) continue;
+
+            const offsetAmount = 0.08;
+            group.forEach((item, gi) => {
+                const { index, pathDef } = item;
+
+                // 実際の経路を計算して方向を取得
+                let path = pathDef.cells.map(c => ({ x: c[0], y: c[1] }));
+                if (path.length === 2 && !pathDef.direct) {
+                    path = this.findPath(path[0], path[1]);
+                }
+
+                const start = path[0];
+                const next = path[1];
+                const dx = next.x - start.x;
+                const dy = next.y - start.y;
+
+                // 移動方向に垂直なオフセット
+                // x方向移動 → dyでオフセット、y方向移動 → dxでオフセット
+                const sign = (gi === 0) ? 1 : -1;
+                if (Math.abs(dx) >= Math.abs(dy)) {
+                    // 主にx方向 → y方向にずらす
+                    offsets.set(index, { dy: offsetAmount * sign });
+                } else {
+                    // 主にy方向 → x方向にずらす
+                    offsets.set(index, { dx: offsetAmount * sign });
+                }
+            });
+        }
+
+        return offsets;
     }
 
     extractEdges() {
@@ -301,6 +359,68 @@ class MapView {
             }
         }
         return edges;
+    }
+
+    // 通行可能なセル間の隣接リストを構築
+    buildGraph() {
+        const graph = new Map();
+        const key = (x, y) => `${x},${y}`;
+
+        // 全セルを初期化
+        for (let x = 0; x <= 4; x++) {
+            for (let y = 0; y <= 4; y++) {
+                graph.set(key(x, y), []);
+            }
+        }
+
+        // 通路がある場合に隣接関係を追加
+        const edges = this.extractEdges();
+        for (const edge of edges) {
+            const { from, to } = edge;
+            // グリッド内のセルのみ
+            if (from.x >= 0 && from.x <= 4 && from.y >= 0 && from.y <= 4 &&
+                to.x >= 0 && to.x <= 4 && to.y >= 0 && to.y <= 4) {
+                graph.get(key(from.x, from.y)).push({ x: to.x, y: to.y });
+                graph.get(key(to.x, to.y)).push({ x: from.x, y: from.y });
+            }
+        }
+
+        return graph;
+    }
+
+    // BFSで最短経路を探索
+    findPath(start, end) {
+        const graph = this.buildGraph();
+        const key = (x, y) => `${x},${y}`;
+        const startKey = key(start.x, start.y);
+        const endKey = key(end.x, end.y);
+
+        if (startKey === endKey) return [start];
+
+        const visited = new Set([startKey]);
+        const queue = [[start]];
+
+        while (queue.length > 0) {
+            const path = queue.shift();
+            const current = path[path.length - 1];
+            const neighbors = graph.get(key(current.x, current.y)) || [];
+
+            for (const neighbor of neighbors) {
+                const neighborKey = key(neighbor.x, neighbor.y);
+                if (visited.has(neighborKey)) continue;
+
+                const newPath = [...path, neighbor];
+                if (neighborKey === endKey) {
+                    return newPath;
+                }
+
+                visited.add(neighborKey);
+                queue.push(newPath);
+            }
+        }
+
+        // 経路が見つからない場合は直線で返す
+        return [start, end];
     }
 
     drawLayer(getEdgeObj, conditionFn, resolveEdgeChar) {
@@ -510,14 +630,46 @@ class MapView {
         this.drawArrowPath(this.fgCtx, points, style, style.arrowHead, style.arrowTail);
     }
 
-    drawPathTrajectory(pathDef) {
+    drawPathTrajectory(pathDef, autoOffset) {
         const cells = pathDef.cells;
         if (!cells || cells.length < 2) return;
 
-        const path = cells.map(c => ({ x: c[0], y: c[1] }));
+        let path = cells.map(c => ({ x: c[0], y: c[1] }));
+
+        // 2点のみ指定の場合、自動経路計算（direct: true で直線描画）
+        if (path.length === 2 && !pathDef.direct) {
+            path = this.findPath(path[0], path[1]);
+        }
+
         const style = this.getPathStyle(pathDef.style);
-        const points = getFlowArrowPoints(path, style.edgeOffset);
+        // 隣接2セルの場合は edgeOffset を小さくして矢印を長くする
+        const isAdjacent = path.length === 2 &&
+            Math.abs(path[0].x - path[1].x) + Math.abs(path[0].y - path[1].y) === 1;
+        const edgeOffset = isAdjacent ? style.edgeOffset * 0.5 : style.edgeOffset;
+        const points = getFlowArrowPoints(path, edgeOffset);
         if (points.length < 2) return;
+
+        // offset: パス全体を平行移動（手動設定 > 自動オフセット）
+        const offset = pathDef.offset || autoOffset;
+        if (offset) {
+            const dx = (offset.dx || 0) * CELL_SIZE;
+            const dy = (offset.dy || 0) * CELL_SIZE;
+            for (const p of points) {
+                p.px += dx;
+                p.py -= dy;
+            }
+        }
+
+        // startOffset / endOffset を適用（CELL_SIZEに対する比率、dy正で上移動）
+        if (pathDef.startOffset) {
+            points[0].px += (pathDef.startOffset.dx || 0) * CELL_SIZE;
+            points[0].py -= (pathDef.startOffset.dy || 0) * CELL_SIZE;
+        }
+        if (pathDef.endOffset) {
+            const last = points[points.length - 1];
+            last.px += (pathDef.endOffset.dx || 0) * CELL_SIZE;
+            last.py -= (pathDef.endOffset.dy || 0) * CELL_SIZE;
+        }
 
         const drawHead = pathDef.arrowHead ?? style.arrowHead;
         const drawTail = pathDef.arrowTail ?? style.arrowTail;
@@ -526,22 +678,69 @@ class MapView {
 
         // ラベル描画
         if (pathDef.label) {
-            let labelIndex;
-            switch (pathDef.labelAt) {
-                case 'start': labelIndex = 0; break;
-                case 'end': labelIndex = points.length - 1; break;
-                default: labelIndex = Math.floor(points.length / 2);
-            }
-            const labelPoint = points[labelIndex];
+            const labelPoint = this.getPointOnPath(points, pathDef.labelAt ?? 0.1);
             const ctx = this.fgCtx;
             ctx.save();
             ctx.font = `bold ${style.fontSize}px sans-serif`;
-            ctx.fillStyle = style.strokeStyle;
             ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
-            ctx.fillText(pathDef.label, labelPoint.px, labelPoint.py - 10);
+            ctx.textBaseline = 'middle';
+
+            const text = pathDef.label;
+            const metrics = ctx.measureText(text);
+            const textWidth = metrics.width;
+            const textHeight = style.fontSize;
+            const padding = 1;
+            const x = labelPoint.px;
+            const y = labelPoint.py - textHeight * 0.7;
+
+            // 背景
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+            ctx.fillRect(
+                x - textWidth / 2 - padding,
+                y - textHeight / 2 - padding,
+                textWidth + padding * 2,
+                textHeight + padding * 2
+            );
+
+            // テキスト
+            ctx.fillStyle = style.strokeStyle;
+            ctx.fillText(text, x, y);
             ctx.restore();
         }
+    }
+
+    // パス全長に対する比率(0〜1)で座標を取得
+    getPointOnPath(points, t) {
+        if (points.length < 2) return points[0];
+        t = Math.max(0, Math.min(1, t));
+
+        // 各セグメントの長さを計算
+        const segments = [];
+        let totalLength = 0;
+        for (let i = 0; i < points.length - 1; i++) {
+            const dx = points[i + 1].px - points[i].px;
+            const dy = points[i + 1].py - points[i].py;
+            const len = Math.sqrt(dx * dx + dy * dy);
+            segments.push({ start: points[i], end: points[i + 1], length: len });
+            totalLength += len;
+        }
+
+        // 目標距離
+        const targetDist = t * totalLength;
+        let accumulated = 0;
+
+        for (const seg of segments) {
+            if (accumulated + seg.length >= targetDist) {
+                const segT = (targetDist - accumulated) / seg.length;
+                return {
+                    px: seg.start.px + (seg.end.px - seg.start.px) * segT,
+                    py: seg.start.py + (seg.end.py - seg.start.py) * segT
+                };
+            }
+            accumulated += seg.length;
+        }
+
+        return points[points.length - 1];
     }
 
     drawArrowPath(ctx, points, style, drawHead, drawTail) {
@@ -576,9 +775,9 @@ class MapView {
         if (points.length === 2) {
             ctx.lineTo(strokeEnd.px, strokeEnd.py);
         } else if (points.length === 3) {
+            // 3点の場合も中間点を制御点としてカーブ描画
             const mid = points[1];
-            ctx.lineTo(mid.px, mid.py);
-            ctx.lineTo(strokeEnd.px, strokeEnd.py);
+            ctx.quadraticCurveTo(mid.px, mid.py, strokeEnd.px, strokeEnd.py);
         } else {
             for (let i = 1; i < points.length - 2; i++) {
                 const xc = (points[i].px + points[i + 1].px) / 2;

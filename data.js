@@ -61,21 +61,18 @@ const DATA = {
                     cells: [[0, 0], [0, 2], [2, 2], [2, 4], [1, 4], [1, 3], [0, 3], [0, 4]],
                     style: 'PT1',
                     label: 'PT1',
-                    labelAt: 'start',
                 },
                 {
                     toggle: '最短ルート',
-                    cells: [[0, 0], [2, 0], [2, 1], [3, 1], [3, 0]],
+                    cells: [[0, 0], [3, 0]],
                     style: 'PT2',
                     label: 'PT2',
-                    labelAt: 'start',
                 },
                 {
                     toggle: '最短ルート',
-                    cells: [[2, 2], [4, 2], [4, 0]],
+                    cells: [[2, 2], [4, 0]],
                     style: 'PT2',
                     label: 'PT2',
-                    labelAt: 'start',
                 }
 
             ],
@@ -120,14 +117,13 @@ const DATA = {
                     cells: [[0, 4], [1, 4]],
                     style: 'PT1',
                     label: 'PT1',
-                    labelAt: 'middle',
+                    labelAt: 0.5,
                 },
                 {
                     toggle: '最短ルート',
-                    cells: [[4, 0], [4, 4], [2, 4]],
+                    cells: [[4, 0], [2, 4]],
                     style: 'PT2',
                     label: 'PT2',
-                    labelAt: 'start',
                 }
             ]
         },
@@ -160,26 +156,25 @@ const DATA = {
             paths: [
                 {
                     toggle: '最短ルート',
-                    cells: [[1, 4], [0, 4], [0, 2], [1, 2], [1, 1], [2, 1], [2, 0], [3, 0]],
+                    cells: [[1, 4], [3, 0]],
                     style: 'PT1',
                     label: 'PT1',
-                    labelAt: 'start',
                 },
                 {
                     toggle: '最短ルート',
-                    cells: [[3, 4], [2, 4]],
+                    cells: [[3, 0], [2, 4]],
                     style: 'PT1',
+                    direct: true,
                 },
                 {
                     toggle: '最短ルート',
-                    cells: [[1, 1], [0, 1], [0, 0]],
+                    cells: [[1, 1], [0, 0]],
                     style: 'PT2',
                     label: 'PT2',
-                    labelAt: 'start',
                 },
                 {
                     toggle: '最短ルート',
-                    cells: [[1, 2], [1, 3], [4, 3], [4, 4], [3, 4]],
+                    cells: [[1, 2], [3, 4]],
                     style: 'PT2',
                 }
             ]
@@ -225,10 +220,18 @@ const DATA = {
             paths: [
                 {
                     toggle: '最短ルート',
-                    cells: [[2, 4], [0, 4], [0, 0]],
+                    cells: [[2, 4], [0, 0]],
                     style: 'PT1',
                     label: 'PT1',
-                    labelAt: 'start',
+                    labelAt: 0.5,
+                },
+                {
+                    toggle: '最短ルート',
+                    cells: [[2, 4], [0, 4]],
+                    style: 'PT2',
+                    label: 'PT2',
+                    labelAt: 0.5,
+                    offset: { dy: 0.15 },
                 }
             ]
         },
@@ -269,11 +272,11 @@ const DATA = {
                     cells: [[0, 0], [2, 0]],
                     style: 'PT1',
                     label: 'PT1',
-                    labelAt: 'start',
+                    labelAt: 0,
                 },
                 {
                     toggle: '最短ルート',
-                    cells: [[2, 2], [4, 2], [4, 3]],
+                    cells: [[2, 2], [4, 3]],
                     style: 'PT1',
                 },
                 {
@@ -281,7 +284,7 @@ const DATA = {
                     cells: [[0, 4], [0, 2], [2, 2], [2, 1]],
                     style: 'PT2',
                     label: 'PT2',
-                    labelAt: 'start',
+                    labelAt: 0,
                 }
             ]
         },
@@ -322,17 +325,17 @@ const DATA = {
             paths: [
                 {
                     toggle: '最短ルート',
-                    cells: [[4, 3], [4, 2], [1, 2], [1, 3]],
+                    cells: [[4, 3], [1, 3]],
                     style: 'PT1',
                     label: 'PT1',
-                    labelAt: 'start',
+                    labelAt: 0.5,
                 },
                 {
                     toggle: '最短ルート',
-                    cells: [[3, 2], [3, 3]],
+                    cells: [[4, 3], [3, 3]],
                     style: 'PT2',
                     label: 'PT2',
-                    labelAt: 'start',
+                    labelAt: 0.5,
                 }
             ]
         },
@@ -388,7 +391,25 @@ const DATA = {
             nodes: [
                 { x: 4, y: 0, class: "icon-down 7F" },
                 { x: 1, y: 3, icons: ["icon-up tl 9F!"] },
+            ],
+
+            paths: [
+                {
+                    toggle: '最短ルート',
+                    cells: [[4, 0], [1, 3]],
+                    style: 'PT1',
+                    label: 'PT1',
+                    labelAt: 0.5,
+                },
+                {
+                    toggle: '最短ルート',
+                    cells: [[4, 0], [2, 1]],
+                    style: 'PT2',
+                    label: 'PT2',
+                    labelAt: 0.3,
+                }
             ]
+
         },
         {
             id: 9,
@@ -414,7 +435,32 @@ const DATA = {
                 { x: 3, y: 3, class: "icon-up 10F" },
                 { x: 1, y: 1, class: "icon-up 10F" },
                 { x: 3, y: 1, class: "icon-down 8F" },
+            ],
+
+            paths: [
+                {
+                    toggle: '最短ルート',
+                    cells: [[3, 1], [2, 2]],
+                    style: 'PT1',
+                    label: 'PT1',
+                    labelAt: 0.4,
+                },
+                {
+                    toggle: '最短ルート',
+                    cells: [[2, 2], [4, 4]],
+                    style: 'PT2',
+                    label: 'PT2',
+                    labelAt: 0.05,
+                },
+                {
+                    toggle: '最短ルート',
+                    cells: [[4, 4], [1, 3]],
+                    direct: true,
+                },
+
+
             ]
+
         },
         {
             id: 10,
@@ -449,8 +495,13 @@ const DATA = {
                     cells: [[2, 1], [2, 2], [4, 2], [4, 0], [2, 0]],
                     style: 'PT1',
                     label: 'PT1',
-                    labelAt: 'start',
-                }
+                },
+                {
+                    toggle: '最短ルート',
+                    cells: [[1, 3], [0, 4]],
+                    style: 'PT2',
+                    label: 'PT2',
+                },
             ]
         }
     ]
