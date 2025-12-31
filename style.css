@@ -364,6 +364,11 @@ div[data-path="PT2"] {
     background-size: 50%; background-position: center; background-repeat: no-repeat;
     color: transparent;
 }
+.icon-pitfall {
+    background-image: url('images/pitfall.png');  
+    background-size: 50%; background-position: center; background-repeat: no-repeat;
+    color: transparent;
+}
 
 .sub-icon {
     position: absolute;
@@ -384,18 +389,24 @@ div[data-path="PT2"] {
 }
 
 .sub-icon.tl[data-label]::before { top: 100%; left: 0; }
-.sub-icon.tm[data-label]::before { top: 100%; left: -50%; right: auto; }
+.sub-icon.tc[data-label]::before { top: 100%; left: -50%; right: auto; }
 .sub-icon.tr[data-label]::before { top: 100%; right: 0; left: auto; }
+.sub-icon.ml[data-label]::before { top: 50%; left: 100%; transform: translateY(-50%); }
+.sub-icon.mc[data-label]::before { top: 100%; left: 50%; transform: translateX(-50%); }
+.sub-icon.mr[data-label]::before { top: 50%; right: 100%; left: auto; transform: translateY(-50%); }
 .sub-icon.bl[data-label]::before { bottom: 100%; top: auto; left: 0; }
-.sub-icon.bm[data-label]::before { bottom: 100%; left: -50%; right: auto; }
+.sub-icon.bc[data-label]::before { bottom: 100%; left: -50%; right: auto; }
 .sub-icon.br[data-label]::before { bottom: 100%; top: auto; right: 0; left: auto; }
 
 /* 配置ユーティリティ */
 .tl { top: 0; left: 0; width: 33%; height: 33%; background-position: top left; }
-.tm { top: 0; left: 50%; transform: translateX(-50%); width: 33%; height: 33%; background-position: top center; }
+.tc { top: 0; left: 50%; transform: translateX(-50%); width: 33%; height: 33%; background-position: top center; }
 .tr { top: 0; right: 0; width: 33%; height: 33%; background-position: top right; }
+.ml { top: 50%; transform: translateY(-50%); left: 0; width: 33%; height: 33%; background-position: center left; }
+.mc { top: 50%; left: 50%; transform: translate(-50%, -50%); width: 33%; height: 33%; background-position: center center; }
+.mr { top: 50%; transform: translateY(-50%); right: 0; width: 33%; height: 33%; background-position: center right; }
 .bl { bottom: 0; left: 0; width: 33%; height: 33%; background-position: bottom left; }
-.bm { bottom: 0; left: 50%; transform: translateX(-50%); width: 33%; height: 33%; background-position: bottom center; }
+.bc { bottom: 0; left: 50%; transform: translateX(-50%); width: 33%; height: 33%; background-position: bottom center; }
 .br { bottom: 0; right: 0; width: 33%; height: 33%; background-position: bottom right; }
 
 .corner-icon {

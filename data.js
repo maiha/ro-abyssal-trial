@@ -12,23 +12,23 @@ const DATA = {
         'E': { text: '障壁解除' },
         'W': { text: '注意', class: 'icon-warn' },
 
-        '1F': { label: "1F" },
-        '2F': { label: "2F" },
-        '3F': { label: "3F" },
-        '4F': { label: "4F" },
-        '5F': { label: "5F" },
-        '6F': { label: "6F" },
-        '7F': { label: "7F" },
-        '8F': { label: "8F" },
-        '9F': { label: "9F" },
-        '10F': { label: "10F" },
+        'B1': { label: "1層" },
+        'B2': { label: "2層" },
+        'B3': { label: "3層" },
+        'B4': { label: "4層" },
+        'B5': { label: "5層" },
+        'B6': { label: "6層" },
+        'B7': { label: "7層" },
+        'B8': { label: "8層" },
+        'B9': { label: "9層" },
+        'B10': { label: "10層" },
     },
 
     // マップデータの配列
     maps: [
         {
             id: 1,
-            name: "1F",
+            name: "B1",
             title: "第1層 光と闇の選択",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
@@ -51,7 +51,8 @@ const DATA = {
                 //                'boss': { text: "BOSS", class: "icon-boss" }
             },
             nodes: [
-                { x: 4, y: 0, class: "icon-up 2F" }, // CSSクラス"icon-up" と データ"2F"を適用
+                { x: 0, y: 4, icons: ["icon-down mc B2"] },
+                { x: 4, y: 0, class: "icon-down B2" }, // CSSクラス"icon-down" と データ"2F"を適用
                 { x: 0, y: 0, class: "start" },      // データ"start"を適用
                 { x: 3, y: 3, label: "障壁(0-0-6)" },
             ],
@@ -81,7 +82,7 @@ const DATA = {
         },
         {
             id: 2,
-            name: "2F",
+            name: "B2",
             title: "第2層 食物連鎖",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
@@ -104,12 +105,12 @@ const DATA = {
             },
 
             nodes: [
-                { x: 1, y: 4, class: "icon-up 3F" },
-                { x: 0, y: 4, class: "icon-down 1F" },
-                { x: 4, y: 0, class: "icon-down 1F" },
+                { x: 1, y: 4, class: "icon-pitfall B3" },
+                { x: 0, y: 4, class: "icon-up B1" },
+                { x: 4, y: 0, class: "icon-up B1" },
                 { x: 3, y: 3, label: "障壁(0-1-6)" },
                 { x: 2, y: 2, label: "燭台で解除" },
-                { x: 2, y: 2, icons: ["icon-up br 3F"] },
+                { x: 2, y: 2, icons: ["icon-down br B3"] },
             ],
             paths: [
                 {
@@ -129,7 +130,7 @@ const DATA = {
         },
         {
             id: 3,
-            name: "3F",
+            name: "B3",
             title: "第3層 黄金の盗掘者",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
@@ -150,8 +151,8 @@ const DATA = {
                 { x: 3, y: 0, text: '魔物の首', label: "首を手に取る" },
                 { x: 3, y: 4, text: '首なし像', label: "首を捧げる" },
                 { x: 1, y: 0, label: "障壁(0-2-6)" },
-                { x: 2, y: 4, class: "icon-up 4F" },
-                { x: 2, y: 2, class: "icon-down 2F" },
+                { x: 2, y: 4, class: "icon-down B4" },
+                { x: 2, y: 2, class: "icon-up B2" },
             ],
             paths: [
                 {
@@ -181,7 +182,7 @@ const DATA = {
         },
         {
             id: 4,
-            name: "4F",
+            name: "B4",
             title: "第4層 神殿上層",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
@@ -199,20 +200,20 @@ const DATA = {
                 "           ",
             ],
             styles: {
-                '5F!': { label: "5F(一方通行)", class: "warn-label" },
+                'B5!': { label: "5層(一通)", class: "warn-label" },
             },
 
             nodes: [
-                { x: 2, y: 4, class: "icon-down 3F" },
-                { x: 1, y: 3, class: "icon-up 5F" },
-                { x: 3, y: 3, class: "icon-up 5F" },
-                { x: 1, y: 1, class: "icon-up 5F" },
-                { x: 3, y: 1, class: "icon-up 5F" },
+                { x: 2, y: 4, class: "icon-up B3" },
+                { x: 1, y: 3, class: "icon-down B5" },
+                { x: 3, y: 3, class: "icon-down B5" },
+                { x: 1, y: 1, class: "icon-down B5" },
+                { x: 3, y: 1, class: "icon-down B5" },
                 // 一方通行
-                { x: 0, y: 4, icons: ["icon-up tm 5F!"] },
-                { x: 4, y: 4, icons: ["icon-up tm 5F!"] },
-                { x: 0, y: 0, icons: ["icon-up bm 5F!"] },
-                { x: 4, y: 0, icons: ["icon-up bm 5F!"] },
+                { x: 0, y: 4, icons: ["icon-pitfall tc B5!"] },
+                { x: 4, y: 4, icons: ["icon-pitfall tc B5!"] },
+                { x: 0, y: 0, icons: ["icon-pitfall bc B5!"] },
+                { x: 4, y: 0, icons: ["icon-pitfall bc B5!"] },
 
                 { x: 2, y: 0, label: "障壁(0-3-6)" },
             ],
@@ -237,7 +238,7 @@ const DATA = {
         },
         {
             id: 5,
-            name: "5F",
+            name: "B5",
             title: "第5層 神殿下層",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
@@ -258,11 +259,11 @@ const DATA = {
             },
 
             nodes: [
-                { x: 4, y: 3, class: "icon-up 6F" },
-                { x: 1, y: 3, class: "icon-down 4F" },
-                { x: 3, y: 3, class: "icon-down 4F" },
-                { x: 1, y: 1, class: "icon-down 4F" },
-                { x: 3, y: 1, class: "icon-down 4F" },
+                { x: 4, y: 3, class: "icon-down B6" },
+                { x: 1, y: 3, class: "icon-up B4" },
+                { x: 3, y: 3, class: "icon-up B4" },
+                { x: 1, y: 1, class: "icon-up B4" },
+                { x: 3, y: 1, class: "icon-up B4" },
                 { x: 4, y: 4, label: "障壁(0-4-6)" },
             ],
 
@@ -290,7 +291,7 @@ const DATA = {
         },
         {
             id: 6,
-            name: "6F",
+            name: "B6",
             title: "第6層 宝物庫",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
@@ -311,8 +312,8 @@ const DATA = {
             },
 
             nodes: [
-                { x: 1, y: 3, icons: ["icon-up tr 7F"] },
-                { x: 4, y: 3, class: "icon-down 5F" },
+                { x: 1, y: 3, icons: ["icon-down tr B7"] },
+                { x: 4, y: 3, class: "icon-up B5" },
                 // 障壁解除
                 { x: 0, y: 0, label: "N3-E3-D1" },
                 { x: 1, y: 0, label: "N3-E3-D2" },
@@ -341,7 +342,7 @@ const DATA = {
         },
         {
             id: 7,
-            name: "7F",
+            name: "B7",
             title: "第7層 一筆書き",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
@@ -360,15 +361,15 @@ const DATA = {
             ],
             flowArrows: true,
             styles: {
-                '8F!': { label: '8F右下' },
+                'B8!': { label: 'B8右下' },
             },
             nodes: [
-                { x: 1, y: 3, icons: ["icon-down tl 6F", "icon-up br 8F!"] },
+                { x: 1, y: 3, icons: ["icon-up tl B6", "icon-down br B8!"] },
             ]
         },
         {
             id: 8,
-            name: "8F",
+            name: "B8",
             title: "第8層 世界一周",
             headers: { x: ["E2", "E3", "E4", "E0", "E1"], y: ["N3", "N4", "N0", "N1", "N2"] },
             notes: "",
@@ -386,11 +387,11 @@ const DATA = {
                 "           ",
             ],
             styles: {
-                '9F!': { label: '9F右下側' },
+                'B9!': { label: 'B9右下側' },
             },
             nodes: [
-                { x: 4, y: 0, class: "icon-down 7F" },
-                { x: 1, y: 3, icons: ["icon-up tl 9F!"] },
+                { x: 4, y: 0, class: "icon-up B7" },
+                { x: 1, y: 3, icons: ["icon-down tl B9!"] },
             ],
 
             paths: [
@@ -413,7 +414,7 @@ const DATA = {
         },
         {
             id: 9,
-            name: "9F",
+            name: "B9",
             title: "第9層 星幽地帯",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
@@ -431,10 +432,10 @@ const DATA = {
                 "           ",
             ],
             nodes: [
-                { x: 1, y: 3, class: "icon-up 10F" },
-                { x: 3, y: 3, class: "icon-up 10F" },
-                { x: 1, y: 1, class: "icon-up 10F" },
-                { x: 3, y: 1, class: "icon-down 8F" },
+                { x: 1, y: 3, class: "icon-down B10" },
+                { x: 3, y: 3, class: "icon-down B10" },
+                { x: 1, y: 1, class: "icon-down B10" },
+                { x: 3, y: 1, class: "icon-up B8" },
             ],
 
             paths: [
@@ -464,7 +465,7 @@ const DATA = {
         },
         {
             id: 10,
-            name: "10F",
+            name: "B10",
             title: "第10層 暗き闇の底",
             headers: { x: ["E0", "E1", "E2", "E3", "E4"], y: ["N0", "N1", "N2", "N3", "N4"] },
             notes: "",
@@ -485,9 +486,9 @@ const DATA = {
                 { x: 2, y: 1, text: "裏ボス" },
                 { x: 3, y: 1, text: "表ボス" },
 
-                { x: 1, y: 3, class: "icon-down 9F" },
-                { x: 3, y: 3, class: "icon-down 9F" },
-                { x: 1, y: 1, class: "icon-down 9F" },
+                { x: 1, y: 3, class: "icon-up B9" },
+                { x: 3, y: 3, class: "icon-up B9" },
+                { x: 1, y: 1, class: "icon-up B9" },
             ],
             paths: [
                 {
