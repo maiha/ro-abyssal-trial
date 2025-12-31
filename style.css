@@ -297,10 +297,10 @@ div[data-edge="flowArrowPath"] {
    ========================================== */
 
 div[data-path="default"] {
-    --strokeStyle: #3498db;
+    --lineColor: #3498db;
     --lineWidth: 4;
-    --headLength: 12;
-    --headAngle: 30;
+    --arrowLength: 12;
+    --arrowAngle: 30;
     --edgeOffset: 0.35;
     --arrowHead: 1;
     --arrowTail: 0;
@@ -313,26 +313,59 @@ div[data-path="arrow2"] { --arrowHead: 0; --arrowTail: 1; }
 div[data-path="arrow3"] { --arrowHead: 1; --arrowTail: 1; }
 
 /* 色スタイル */
-div[data-path="primary"] { --strokeStyle: #2980b9; }
-div[data-path="danger"]  { --strokeStyle: #e74c3c; }
-div[data-path="success"] { --strokeStyle: #27ae60; }
-div[data-path="warning"] { --strokeStyle: #f39c12; }
+div[data-path="primary"] { --lineColor: #2980b9; }
+div[data-path="danger"]  { --lineColor: #e74c3c; }
+div[data-path="success"] { --lineColor: #27ae60; }
+div[data-path="warning"] { --lineColor: #f39c12; }
 
-/* ルート表示 */
+/* ルート表示
+   line:
+     --lineColor: 線の色
+     --lineWidth: 線の太さ
+     --lineBorderColor: 線の縁取り色（デフォルト黒）
+     --lineBorderWidth: 線の縁取り幅（0で無し）
+   arrow:
+     --arrowHead: 矢頭表示（1 or 0）
+     --arrowTail: 矢尻表示（1 or 0）
+     --arrowLength: 矢頭の長さ
+     --arrowAngle: 矢頭の角度
+   label:
+     --labelColor: labelの文字色（省略時はlineColor）
+     --labelFontSize: labelのフォントサイズ
+     --labelBackground: labelの背景色（noneで非表示）
+     --labelBorderColor: labelの縁取り色（デフォルト黒）
+     --labelBorderWidth: labelの縁取り幅（0で無し）
+   tip:
+     --tipColor: tipの文字色（省略時はlineColor）
+     --tipFontSize: tipのフォントサイズ（省略時はlabelFontSize）
+     --tipBackground: tipの背景色（noneで非表示）
+     --tipBorderColor: tipの縁取り色（デフォルト黒）
+     --tipBorderWidth: tipの縁取り幅（0で無し）
+   other:
+     --edgeOffset: セル端からのオフセット（0〜0.5）
+*/
 div[data-path="PT1"] {
-    --strokeStyle: #27ae60;
+    --lineColor: #27ae60;
     --lineWidth: 4;
-    --fontSize: 20;
-    --headLength: 18;
-    --headAngle: 36;
+    --arrowLength: 18;
+    --arrowAngle: 36;
+    --labelFontSize: 20;
+    --tipFontSize: 16;
+    --tipBackground: none;
+    --tipBorderColor: white;
+    --tipBorderWidth: 2px;
 }
 
 div[data-path="PT2"] {
-    --strokeStyle: #2980b9;
+    --lineColor: #2980b9;
     --lineWidth: 4;
-    --fontSize: 20;
-    --headLength: 18;
-    --headAngle: 36;
+    --arrowLength: 18;
+    --arrowAngle: 36;
+    --labelFontSize: 20;
+    --tipFontSize: 16;
+    --tipBackground: none;
+    --tipBorderColor: white;
+    --tipBorderWidth: 2px;
 }
 
 /* =========================================

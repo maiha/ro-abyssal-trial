@@ -564,14 +564,30 @@ class MapView {
         const style = window.getComputedStyle(dummy);
 
         const config = {
-            strokeStyle: style.getPropertyValue('--strokeStyle').trim() || null,
+            // line
+            lineColor: style.getPropertyValue('--lineColor').trim() || null,
             lineWidth: parseFloat(style.getPropertyValue('--lineWidth')) || null,
-            headLength: parseFloat(style.getPropertyValue('--headLength')) || null,
-            headAngle: parseFloat(style.getPropertyValue('--headAngle')) || null,
-            edgeOffset: parseFloat(style.getPropertyValue('--edgeOffset')) || null,
+            lineBorderColor: style.getPropertyValue('--lineBorderColor').trim() || null,
+            lineBorderWidth: parseFloat(style.getPropertyValue('--lineBorderWidth')) || null,
+            // arrow
             arrowHead: style.getPropertyValue('--arrowHead').trim() || null,
             arrowTail: style.getPropertyValue('--arrowTail').trim() || null,
-            fontSize: parseFloat(style.getPropertyValue('--fontSize')) || null
+            arrowLength: parseFloat(style.getPropertyValue('--arrowLength')) || null,
+            arrowAngle: parseFloat(style.getPropertyValue('--arrowAngle')) || null,
+            // label
+            labelColor: style.getPropertyValue('--labelColor').trim() || null,
+            labelFontSize: parseFloat(style.getPropertyValue('--labelFontSize')) || null,
+            labelBackground: style.getPropertyValue('--labelBackground').trim() || null,
+            labelBorderColor: style.getPropertyValue('--labelBorderColor').trim() || null,
+            labelBorderWidth: parseFloat(style.getPropertyValue('--labelBorderWidth')) || null,
+            // tip
+            tipColor: style.getPropertyValue('--tipColor').trim() || null,
+            tipFontSize: parseFloat(style.getPropertyValue('--tipFontSize')) || null,
+            tipBackground: style.getPropertyValue('--tipBackground').trim() || null,
+            tipBorderColor: style.getPropertyValue('--tipBorderColor').trim() || null,
+            tipBorderWidth: parseFloat(style.getPropertyValue('--tipBorderWidth')) || null,
+            // other
+            edgeOffset: parseFloat(style.getPropertyValue('--edgeOffset')) || null
         };
 
         this.stage.removeChild(dummy);
@@ -582,41 +598,88 @@ class MapView {
     getPathStyle(styleNames) {
         const names = (styleNames || 'default').split(/\s+/);
         const merged = {
-            strokeStyle: '#3498db', lineWidth: 4, headLength: 12, headAngle: 30,
-            edgeOffset: 0.35, arrowHead: '1', arrowTail: '0', fontSize: 14
+            // line
+            lineColor: '#3498db', lineWidth: 4,
+            lineBorderColor: null, lineBorderWidth: 0,
+            // arrow
+            arrowHead: '1', arrowTail: '0', arrowLength: 12, arrowAngle: 30,
+            // label
+            labelColor: null, labelFontSize: 14,
+            labelBackground: 'rgba(255, 255, 255, 0.85)',
+            labelBorderColor: null, labelBorderWidth: 0,
+            // tip
+            tipColor: null, tipFontSize: null,
+            tipBackground: 'rgba(255, 255, 255, 0.85)',
+            tipBorderColor: null, tipBorderWidth: 0,
+            // other
+            edgeOffset: 0.35
         };
 
         for (const name of names) {
-            const style = this.getPathStyleSingle(name);
-            if (style.strokeStyle) merged.strokeStyle = style.strokeStyle;
-            if (style.lineWidth) merged.lineWidth = style.lineWidth;
-            if (style.headLength) merged.headLength = style.headLength;
-            if (style.headAngle) merged.headAngle = style.headAngle;
-            if (style.edgeOffset) merged.edgeOffset = style.edgeOffset;
-            if (style.arrowHead) merged.arrowHead = style.arrowHead;
-            if (style.arrowTail) merged.arrowTail = style.arrowTail;
-            if (style.fontSize) merged.fontSize = style.fontSize;
+            const s = this.getPathStyleSingle(name);
+            // line
+            if (s.lineColor) merged.lineColor = s.lineColor;
+            if (s.lineWidth) merged.lineWidth = s.lineWidth;
+            if (s.lineBorderColor) merged.lineBorderColor = s.lineBorderColor;
+            if (s.lineBorderWidth) merged.lineBorderWidth = s.lineBorderWidth;
+            // arrow
+            if (s.arrowHead) merged.arrowHead = s.arrowHead;
+            if (s.arrowTail) merged.arrowTail = s.arrowTail;
+            if (s.arrowLength) merged.arrowLength = s.arrowLength;
+            if (s.arrowAngle) merged.arrowAngle = s.arrowAngle;
+            // label
+            if (s.labelColor) merged.labelColor = s.labelColor;
+            if (s.labelFontSize) merged.labelFontSize = s.labelFontSize;
+            if (s.labelBackground) merged.labelBackground = s.labelBackground;
+            if (s.labelBorderColor) merged.labelBorderColor = s.labelBorderColor;
+            if (s.labelBorderWidth) merged.labelBorderWidth = s.labelBorderWidth;
+            // tip
+            if (s.tipColor) merged.tipColor = s.tipColor;
+            if (s.tipFontSize) merged.tipFontSize = s.tipFontSize;
+            if (s.tipBackground) merged.tipBackground = s.tipBackground;
+            if (s.tipBorderColor) merged.tipBorderColor = s.tipBorderColor;
+            if (s.tipBorderWidth) merged.tipBorderWidth = s.tipBorderWidth;
+            // other
+            if (s.edgeOffset) merged.edgeOffset = s.edgeOffset;
         }
 
         return {
-            strokeStyle: merged.strokeStyle,
+            // line
+            lineColor: merged.lineColor,
             lineWidth: merged.lineWidth,
-            headLength: merged.headLength,
-            headAngle: merged.headAngle * Math.PI / 180,
-            edgeOffset: merged.edgeOffset,
+            lineBorderColor: merged.lineBorderColor || '#000',
+            lineBorderWidth: merged.lineBorderWidth,
+            // arrow
             arrowHead: merged.arrowHead !== '0',
             arrowTail: merged.arrowTail === '1',
-            fontSize: merged.fontSize
+            arrowLength: merged.arrowLength,
+            arrowAngle: merged.arrowAngle * Math.PI / 180,
+            // label
+            labelColor: merged.labelColor || merged.lineColor,
+            labelFontSize: merged.labelFontSize,
+            labelBackground: merged.labelBackground,
+            labelBorderColor: merged.labelBorderColor || '#000',
+            labelBorderWidth: merged.labelBorderWidth,
+            // tip
+            tipColor: merged.tipColor || merged.lineColor,
+            tipFontSize: merged.tipFontSize || merged.labelFontSize,
+            tipBackground: merged.tipBackground,
+            tipBorderColor: merged.tipBorderColor || '#000',
+            tipBorderWidth: merged.tipBorderWidth,
+            // other
+            edgeOffset: merged.edgeOffset
         };
     }
 
     getFlowArrowStyle() {
         const style = this.getEdgeStyle('flowArrow');
         return {
-            strokeStyle: style?.strokeStyle || '#e74c3c',
+            lineColor: style?.strokeStyle || '#e74c3c',
             lineWidth: style?.lineWidth || 3,
-            headLength: parseFloat(style?.headLength) || 15,
-            headAngle: (parseFloat(style?.headAngle) || 30) * Math.PI / 180,
+            arrowLength: parseFloat(style?.headLength) || 15,
+            arrowAngle: (parseFloat(style?.headAngle) || 30) * Math.PI / 180,
+            lineBorderColor: '#000',
+            lineBorderWidth: 0,
             edgeOffset: parseFloat(style?.edgeOffset) || 0.35,
             arrowHead: true,
             arrowTail: false
@@ -681,29 +744,91 @@ class MapView {
             const labelPoint = this.getPointOnPath(points, pathDef.labelAt ?? 0.1);
             const ctx = this.fgCtx;
             ctx.save();
-            ctx.font = `bold ${style.fontSize}px sans-serif`;
+            ctx.font = `bold ${style.labelFontSize}px sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
             const text = pathDef.label;
             const metrics = ctx.measureText(text);
             const textWidth = metrics.width;
-            const textHeight = style.fontSize;
+            const textHeight = style.labelFontSize;
             const padding = 1;
             const x = labelPoint.px;
             const y = labelPoint.py - textHeight * 0.7;
 
             // 背景
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-            ctx.fillRect(
-                x - textWidth / 2 - padding,
-                y - textHeight / 2 - padding,
-                textWidth + padding * 2,
-                textHeight + padding * 2
-            );
+            if (style.labelBackground && style.labelBackground !== 'none') {
+                ctx.fillStyle = style.labelBackground;
+                ctx.fillRect(
+                    x - textWidth / 2 - padding,
+                    y - textHeight / 2 - padding,
+                    textWidth + padding * 2,
+                    textHeight + padding * 2
+                );
+            }
 
-            // テキスト
-            ctx.fillStyle = style.strokeStyle;
+            // テキスト（縁取り + 塗り）
+            if (style.labelBorderWidth > 0) {
+                ctx.strokeStyle = style.labelBorderColor;
+                ctx.lineWidth = style.labelBorderWidth;
+                ctx.strokeText(text, x, y);
+            }
+            ctx.fillStyle = style.labelColor;
+            ctx.fillText(text, x, y);
+            ctx.restore();
+        }
+
+        // tip描画（終点の矢頭付近）
+        if (pathDef.tip) {
+            const lastPoint = points[points.length - 1];
+            const prevPoint = points[points.length - 2];
+            const ctx = this.fgCtx;
+            ctx.save();
+            const tipFontSize = style.tipFontSize;
+            ctx.font = `bold ${tipFontSize}px sans-serif`;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+
+            const text = pathDef.tip;
+            const metrics = ctx.measureText(text);
+            const textWidth = metrics.width;
+            const textHeight = tipFontSize;
+            const padding = 2;
+
+            // 矢印の方向を計算
+            const dx = lastPoint.px - prevPoint.px;
+            const dy = lastPoint.py - prevPoint.py;
+            const isHorizontal = Math.abs(dx) >= Math.abs(dy);
+
+            let x, y;
+            if (isHorizontal) {
+                // 左右方向 → 矢頭の下
+                x = lastPoint.px - textWidth / 2;
+                y = lastPoint.py + textHeight;
+            } else {
+                // 上下方向 → 矢頭の左
+                x = lastPoint.px - textWidth - 8;
+                y = lastPoint.py;
+            }
+
+            // 背景（noneで非表示）
+            if (style.tipBackground && style.tipBackground !== 'none') {
+                ctx.fillStyle = style.tipBackground;
+                ctx.fillRect(
+                    x - padding,
+                    y - textHeight / 2 - padding,
+                    textWidth + padding * 2,
+                    textHeight + padding * 2
+                );
+            }
+
+            // テキスト（縁取り + 塗り）
+            if (style.tipBorderWidth > 0) {
+                ctx.strokeStyle = style.tipBorderColor;
+                ctx.lineWidth = style.tipBorderWidth;
+                ctx.strokeText(text, x, y);
+            }
+            ctx.fillStyle = style.tipColor;
             ctx.fillText(text, x, y);
             ctx.restore();
         }
@@ -751,7 +876,7 @@ class MapView {
 
         const headAngle = Math.atan2(last.py - prev.py, last.px - prev.px);
         const tailAngle = Math.atan2(first.py - second.py, first.px - second.px);
-        const shortenBy = style.headLength - style.lineWidth / 2;
+        const shortenBy = style.arrowLength - style.lineWidth / 2;
 
         const strokeEnd = drawHead ? {
             px: last.px - shortenBy * Math.cos(headAngle),
@@ -764,34 +889,56 @@ class MapView {
         } : first;
 
         ctx.save();
-        ctx.strokeStyle = style.strokeStyle;
-        ctx.lineWidth = style.lineWidth;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        ctx.beginPath();
-        ctx.moveTo(strokeStart.px, strokeStart.py);
+        // パス描画関数
+        const drawPath = () => {
+            ctx.beginPath();
+            ctx.moveTo(strokeStart.px, strokeStart.py);
 
-        if (points.length === 2) {
-            ctx.lineTo(strokeEnd.px, strokeEnd.py);
-        } else if (points.length === 3) {
-            // 3点の場合も中間点を制御点としてカーブ描画
-            const mid = points[1];
-            ctx.quadraticCurveTo(mid.px, mid.py, strokeEnd.px, strokeEnd.py);
-        } else {
-            for (let i = 1; i < points.length - 2; i++) {
-                const xc = (points[i].px + points[i + 1].px) / 2;
-                const yc = (points[i].py + points[i + 1].py) / 2;
-                ctx.quadraticCurveTo(points[i].px, points[i].py, xc, yc);
+            if (points.length === 2) {
+                ctx.lineTo(strokeEnd.px, strokeEnd.py);
+            } else if (points.length === 3) {
+                const mid = points[1];
+                ctx.quadraticCurveTo(mid.px, mid.py, strokeEnd.px, strokeEnd.py);
+            } else {
+                for (let i = 1; i < points.length - 2; i++) {
+                    const xc = (points[i].px + points[i + 1].px) / 2;
+                    const yc = (points[i].py + points[i + 1].py) / 2;
+                    ctx.quadraticCurveTo(points[i].px, points[i].py, xc, yc);
+                }
+                const secondLast = points[points.length - 2];
+                ctx.quadraticCurveTo(secondLast.px, secondLast.py, strokeEnd.px, strokeEnd.py);
             }
-            const secondLast = points[points.length - 2];
-            ctx.quadraticCurveTo(secondLast.px, secondLast.py, strokeEnd.px, strokeEnd.py);
+            ctx.stroke();
+        };
+
+        // 縁取り（先に太い線を描画）
+        if (style.lineBorderWidth > 0 && style.lineBorderColor) {
+            ctx.strokeStyle = style.lineBorderColor;
+            ctx.lineWidth = style.lineWidth + style.lineBorderWidth * 2;
+            drawPath();
         }
 
-        ctx.stroke();
+        // 本体
+        ctx.strokeStyle = style.lineColor;
+        ctx.lineWidth = style.lineWidth;
+        drawPath();
 
-        if (drawHead) drawArrowHead(ctx, strokeEnd.px, strokeEnd.py, last.px, last.py, style);
-        if (drawTail) drawArrowHead(ctx, strokeStart.px, strokeStart.py, first.px, first.py, style);
+        // 矢頭（縁取り付き）
+        if (drawHead) {
+            if (style.lineBorderWidth > 0 && style.lineBorderColor) {
+                drawArrowHead(ctx, strokeEnd.px, strokeEnd.py, last.px, last.py, style, true);
+            }
+            drawArrowHead(ctx, strokeEnd.px, strokeEnd.py, last.px, last.py, style, false);
+        }
+        if (drawTail) {
+            if (style.lineBorderWidth > 0 && style.lineBorderColor) {
+                drawArrowHead(ctx, strokeStart.px, strokeStart.py, first.px, first.py, style, true);
+            }
+            drawArrowHead(ctx, strokeStart.px, strokeStart.py, first.px, first.py, style, false);
+        }
 
         ctx.restore();
     }
@@ -933,17 +1080,25 @@ function tracePath(graph, startKey, visited) {
     return path;
 }
 
-function drawArrowHead(ctx, fromX, fromY, toX, toY, style) {
+function drawArrowHead(ctx, fromX, fromY, toX, toY, style, isStroke = false) {
     const angle = Math.atan2(toY - fromY, toX - fromX);
-    const headLength = style?.headLength || 15;
-    const headAngle = style?.headAngle || Math.PI / 6;
-    ctx.fillStyle = ctx.strokeStyle;
+    const headLength = style?.arrowLength || 15;
+    const headAngle = style?.arrowAngle || Math.PI / 6;
+
     ctx.beginPath();
     ctx.moveTo(toX, toY);
     ctx.lineTo(toX - headLength * Math.cos(angle - headAngle), toY - headLength * Math.sin(angle - headAngle));
     ctx.lineTo(toX - headLength * Math.cos(angle + headAngle), toY - headLength * Math.sin(angle + headAngle));
     ctx.closePath();
-    ctx.fill();
+
+    if (isStroke) {
+        ctx.strokeStyle = style.lineBorderColor;
+        ctx.lineWidth = style.lineBorderWidth * 2;
+        ctx.stroke();
+    } else {
+        ctx.fillStyle = style.lineColor;
+        ctx.fill();
+    }
 }
 
 // ==========================================

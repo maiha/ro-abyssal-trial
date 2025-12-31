@@ -72,8 +72,6 @@ const DATA = {
                 {
                     toggle: '最短ルート',
                     cells: [[2, 2], [4, 0]],
-                    style: 'PT2',
-                    label: 'PT2',
                 }
 
             ],
@@ -125,6 +123,7 @@ const DATA = {
                     cells: [[4, 0], [2, 4]],
                     style: 'PT2',
                     label: 'PT2',
+                    tip: '1F戻り→左上から3F'
                 }
             ]
         },
@@ -163,7 +162,13 @@ const DATA = {
                 },
                 {
                     toggle: '最短ルート',
-                    cells: [[3, 0], [2, 4]],
+                    cells: [[3, 0], [3, 4]],
+                    style: 'PT1',
+                    direct: true,
+                },
+                {
+                    toggle: '最短ルート',
+                    cells: [[3, 4], [2, 4]],
                     style: 'PT1',
                     direct: true,
                 },
@@ -172,6 +177,7 @@ const DATA = {
                     cells: [[1, 1], [0, 0]],
                     style: 'PT2',
                     label: 'PT2',
+                    tip: '右上へ',
                 },
                 {
                     toggle: '最短ルート',
@@ -200,7 +206,7 @@ const DATA = {
                 "           ",
             ],
             styles: {
-                'B5!': { label: "5層(一通)", class: "warn-label" },
+                'B5!': { label: "5層(落)", class: "warn-label" },
             },
 
             nodes: [
@@ -212,7 +218,7 @@ const DATA = {
                 // 一方通行
                 { x: 0, y: 4, icons: ["icon-pitfall tc B5!"] },
                 { x: 4, y: 4, icons: ["icon-pitfall tc B5!"] },
-                { x: 0, y: 0, icons: ["icon-pitfall bc B5!"] },
+                { x: 0, y: 0, icons: ["icon-pitfall bl B5!"] },
                 { x: 4, y: 0, icons: ["icon-pitfall bc B5!"] },
 
                 { x: 2, y: 0, label: "障壁(0-3-6)" },
@@ -225,6 +231,7 @@ const DATA = {
                     style: 'PT1',
                     label: 'PT1',
                     labelAt: 0.5,
+                    tip: '降りる',
                 },
                 {
                     toggle: '最短ルート',
@@ -274,11 +281,13 @@ const DATA = {
                     style: 'PT1',
                     label: 'PT1',
                     labelAt: 0,
+                    tip: '再入場→4F左上',
                 },
                 {
                     toggle: '最短ルート',
                     cells: [[2, 2], [4, 3]],
                     style: 'PT1',
+                    offset: { dy: 0.15 },
                 },
                 {
                     toggle: '最短ルート',
@@ -286,7 +295,13 @@ const DATA = {
                     style: 'PT2',
                     label: 'PT2',
                     labelAt: 0,
-                }
+                },
+                {
+                    toggle: '最短ルート',
+                    cells: [[2, 1], [4, 3]],
+                    style: 'PT2',
+                    direct: true,
+                },
             ]
         },
         {
@@ -330,6 +345,7 @@ const DATA = {
                     style: 'PT1',
                     label: 'PT1',
                     labelAt: 0.5,
+                    offset: { dy: -0.15 },
                 },
                 {
                     toggle: '最短ルート',
@@ -337,6 +353,13 @@ const DATA = {
                     style: 'PT2',
                     label: 'PT2',
                     labelAt: 0.5,
+                },
+                {
+                    toggle: '最短ルート',
+                    cells: [[3, 3], [1, 3]],
+                    style: 'PT2',
+                    offset: { dy: 0.15 },
+                    direct: true,
                 }
             ]
         },
@@ -361,7 +384,7 @@ const DATA = {
             ],
             flowArrows: true,
             styles: {
-                'B8!': { label: 'B8右下' },
+                'B8!': { label: '8層右下' },
             },
             nodes: [
                 { x: 1, y: 3, icons: ["icon-up tl B6", "icon-down br B8!"] },
@@ -387,7 +410,7 @@ const DATA = {
                 "           ",
             ],
             styles: {
-                'B9!': { label: 'B9右下側' },
+                'B9!': { label: '9層右下' },
             },
             nodes: [
                 { x: 4, y: 0, class: "icon-up B7" },
@@ -445,6 +468,7 @@ const DATA = {
                     style: 'PT1',
                     label: 'PT1',
                     labelAt: 0.4,
+                    tip: '転送',
                 },
                 {
                     toggle: '最短ルート',
@@ -502,6 +526,7 @@ const DATA = {
                     cells: [[1, 3], [0, 4]],
                     style: 'PT2',
                     label: 'PT2',
+                    tip: '合流',
                 },
             ]
         }
